@@ -3,6 +3,7 @@
     <div class="aside warning-title">
       <span>请注意，如非必要，请尽量在网络空闲时期爬取题目。如需设置自动爬取策略，请到爬虫管理模块设置</span>
     </div>
+    <ScrapyStatusCard />
     <el-row :gutter="10">
       <el-col :span="12">
         <el-card>
@@ -70,10 +71,12 @@
 
 <script>
 import OJSiteCard from './components/OJSiteCard'
+import ScrapyStatusCard from './components/ScrapyStatusCard'
 export default {
   name: 'GetProblems',
   components: {
-    OJSiteCard
+    OJSiteCard,
+    ScrapyStatusCard
   },
   data() {
     return {
@@ -110,7 +113,9 @@ export default {
         }
       ]
     }
-  }
+  },
+  mounted() {},
+  methods: {}
 }
 </script>
 

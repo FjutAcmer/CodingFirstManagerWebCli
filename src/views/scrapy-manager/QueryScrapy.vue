@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <ScrapyStatusCard />
     <el-card>
       <div slot="header">已有爬虫程序</div>
       <div>
@@ -63,10 +64,13 @@
 
 <script>
 import ScrapyCard from './components/ScrapyCard'
+import ScrapyStatusCard from '../scrapy/components/ScrapyStatusCard.vue'
+
 export default {
   name: 'QueryScrapy',
   components: {
-    ScrapyCard
+    ScrapyCard,
+    ScrapyStatusCard
   },
   data() {
     return {
@@ -97,7 +101,9 @@ export default {
         }
       ]
     }
-  }
+  },
+  mounted() {},
+  methods: {}
 }
 </script>
 
