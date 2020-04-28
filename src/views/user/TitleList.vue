@@ -16,7 +16,6 @@
     <el-table
       v-loading="listLoading"
       :data="titles"
-      border
       fit
       highlight-current-row
       style="width: 98%;"
@@ -24,7 +23,7 @@
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="120">
         <template slot-scope="{row}">
-          <span>{{ row.titleID }}</span>
+          <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="称号" width="400" align="center">
@@ -43,7 +42,7 @@
       </el-table-column>
       <el-table-column label="类型" width="250" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.type }}</span>
+          <span></span>
         </template>
       </el-table-column>
       <el-table-column label="拥有时长" width="250" align="center">
@@ -77,14 +76,14 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="添加称号" :visible.sync="addDialogVisible">
+    <el-dialog title="添加称号" :visible.sync="createDialogVisible">
       <el-form ref="createTitle" :model="createTitleTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="称号ID" prop="titleID">
           <el-input v-model="createTitleTemp.name" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">
+        <el-button @click="createDialogVisible = false">
           取消
         </el-button>
         <el-button type="primary" @click="createTitle">
@@ -99,7 +98,6 @@
 import { fetchTitleList, deleteTitle, updateTitle, createTitle } from '@/api/title'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
-import { parseTime } from '@/utils'
 
 export default {
   name: 'TitleList',
@@ -114,20 +112,19 @@ export default {
       listLoading: true,
       titleQuery: {
         page: 1,
-        limit: 20,
-        sort: '+id',
+        limit: 10,
+        sort: undefined,
         name: undefined
       },
       deleteDialogVisible: false,
       createDialogVisible: false,
       updateDialogVisible: false,
       createTitleTemp: {
-        userID: '',
-        userName: '',
+        id: '',
+        type: '',
         titleID: '',
-        name: '',
-        obtainTime: '',
-        expireTime: '永久'
+        pictureUrl: '',
+        lifeTime: ''
       },
       rules: {
       }
@@ -141,8 +138,8 @@ export default {
       this.listLoading = true
       fetchTitleList(this.titleQuery).then(response => {
         const res = response.data
-        this.titles = res.data.list
-        this.total = res.data.total
+        this.titles = res.datas[0]
+        this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -159,32 +156,18 @@ export default {
     clearFilter() {
       this.titleQuery = {
         page: 1,
-        limit: 20,
-        sort: '+id',
+        limit: 10,
+        sort: undefined,
         name: undefined
       }
       this.getTitles()
     },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
-    },
     sortChange(data) {
       const { prop, order } = data
       if (prop === 'id') {
-        this.sortByID(order)
+        this.titleQuery.sort = order
+        this.handleFilter()
       }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.titleQuery.sort = '+id'
-      } else {
-        this.titleQuery.sort = '-id'
-      }
-      this.handleFilter()
     },
     handleCreate() {
       this.resetTemp()
@@ -196,10 +179,6 @@ export default {
     createTitle() {
       this.$refs['createTitle'].validate((valid) => {
         if (valid) {
-          const date = new Date()
-          this.createTitleTemp.userName = this.userTitleQuery.userName
-          this.createTitleTemp.userID = this.userTitleQuery.userID
-          this.createTitleTemp.time = parseTime(date)
           createTitle(this.createTitleTemp).then(response => {
             this.addDialogVisible = false
             const res = response.data
@@ -221,7 +200,7 @@ export default {
       this.deleteDialogVisible = false
       const row = this.currentRow
       const index = this.currentIndex
-      deleteTitle(row.titleID).then(response => {
+      deleteTitle(row.id).then(response => {
         const res = response.data
         if (res.code === 10000) {
           this.$notify({

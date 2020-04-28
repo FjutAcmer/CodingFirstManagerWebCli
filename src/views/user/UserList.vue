@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="userQuery.usernameOrNickName" placeholder="用户名/昵称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="userQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -13,7 +13,6 @@
     <el-table
       v-loading="listLoading"
       :data="users"
-      border
       fit
       highlight-current-row
       style="width: 98%;"
@@ -34,14 +33,14 @@
           <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Moto" width="350" align="center">
+      <el-table-column label="Motto" width="380" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.moto }}</span>
+          <span>{{ row.motto }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="AC" width="80" align="center">
+      <el-table-column label="ACB" width="80" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.AC }}</span>
+          <span>{{ row.acb }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Rating" width="80" align="center">
@@ -49,17 +48,12 @@
           <span>{{ row.rating }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ACB" width="80" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.ACB }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="手机号码" width="140" align="center">
         <template slot-scope="{row}">
           <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Email" width="160" align="center">
+      <el-table-column label="Email" width="200" align="center">
         <template slot-scope="{row}">
           <span>{{ row.email }}</span>
         </template>
@@ -71,7 +65,6 @@
               操作菜单<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getUserTitle(row)">称号管理</el-dropdown-item>
               <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>
               <el-dropdown-item @click.native="handleRewardACB(row)">奖励ACB</el-dropdown-item>
               <el-dropdown-item @click.native="getCheckIn(row)">签到记录</el-dropdown-item>
@@ -142,8 +135,8 @@ export default {
       userQuery: {
         page: 1,
         limit: 20,
-        sort: '+id',
-        usernameOrNickname: undefined
+        sort: undefined,
+        username: undefined
       },
       rewardACBTemp: {
         id: '',
@@ -160,8 +153,8 @@ export default {
       this.listLoading = true
       fetchUserList(this.userQuery).then(response => {
         const res = response.data
-        this.users = res.data.list
-        this.total = res.data.total
+        this.users = res.datas[0]
+        this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -174,23 +167,17 @@ export default {
     clearFilter() {
       this.userQuery = {
         page: 1,
-        limit: 20,
-        sort: '+id',
-        usernameOrNickname: undefined
+        limit: 10,
+        sort: undefined,
+        username: undefined
       }
       this.getUsers()
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
     },
     sortChange(data) {
       const { prop, order } = data
       if (prop === 'id') {
-        this.sortByID(order)
+        this.userQuery.sort = order
+        this.handleFilter()
       }
     },
     sortByID(order) {
@@ -253,10 +240,10 @@ export default {
       })
     },
     getUserTitle(row) {
-      this.$router.push({ path: '/user/userTitle', query: { id: row.id, name: row.username }})
+      this.$router.push({ path: '/user/userTitle', query: { username: row.username }})
     },
     getUserDetail(row) {
-      this.$router.push({ path: '/user/userDetail', query: { id: row.id }})
+      this.$router.push({ path: '/user/userDetail', query: { username: row.username }})
     }
   }
 }
