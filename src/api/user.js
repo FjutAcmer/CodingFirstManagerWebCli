@@ -26,7 +26,7 @@ export function logout(username) {
 
 export function fetchUserList(query) {
   return request({
-    url: '/user/list',
+    url: '/admin/user/list',
     method: 'get',
     params: query
   })
@@ -34,7 +34,7 @@ export function fetchUserList(query) {
 
 export function fetchUser(id) {
   return request({
-    url: '/user/info',
+    url: '/admin/user/info',
     method: 'get',
     params: { id }
   })
@@ -42,7 +42,7 @@ export function fetchUser(id) {
 
 export function fetchUserTitle(query) {
   return request({
-    url: '/user/title',
+    url: '/admin/user/title',
     method: 'get',
     params: query
   })
@@ -50,7 +50,7 @@ export function fetchUserTitle(query) {
 
 export function updateACB(data) {
   return request({
-    url: '/user/updateACB',
+    url: '/admin/user/updateACB',
     method: 'put',
     data
   })
@@ -58,24 +58,24 @@ export function updateACB(data) {
 
 export function updatePsw(data) {
   return request({
-    url: '/user/updatePsw',
+    url: '/admin/user/updatePsw',
     method: 'put',
     data
   })
 }
 
-export function removeTitle(titleID, userID) {
+export function removeTitle(id) {
   return request({
-    url: '/user/removeTitle',
+    url: '/admin/user/removeTitle',
     method: 'delete',
-    params: { titleID, userID }
+    params: { id }
   })
 }
 
-export function addTitle(titleID, userID) {
+export function addTitle(data) {
   return request({
-    url: '/user/addTitle',
+    url: '/admin/user/addTitle',
     method: 'post',
-    params: { titleID, userID }
+    data
   })
 }
