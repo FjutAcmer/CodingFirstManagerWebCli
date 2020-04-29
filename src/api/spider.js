@@ -14,3 +14,19 @@ export function getItems(data) {
     params: data
   })
 }
+
+export function startSpider(data) {
+  return request({
+    url: '/admin/spider/start',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getSpiderLog(data) {
+  return request({
+    url: '/admin/spider/log',
+    method: 'post',
+    data: data
+  })
+}
