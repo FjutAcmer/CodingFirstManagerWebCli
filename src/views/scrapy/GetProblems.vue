@@ -10,8 +10,8 @@
           <div slot="header">全站爬取</div>
           <div>
             <el-row :gutter="5">
-              <el-col v-for="item in fullOjs" :key="item" :span="4">
-                <OJSiteCard :data="item" />
+              <el-col v-for="item in fullOjs" :key="item.id" :span="4">
+                <OJSiteCard :data="item" @click.native="selectSpiderItem(item)" />
               </el-col>
             </el-row>
           </div>
@@ -22,8 +22,8 @@
           <div slot="header">范围爬取</div>
           <div>
             <el-row :gutter="5">
-              <el-col v-for="item in specOjs" :key="item" :span="4">
-                <OJSiteCard :data="item" />
+              <el-col v-for="item in specOjs" :key="item.id" :span="4">
+                <OJSiteCard :data="item" @click.native="selectSpiderItem(item)" />
               </el-col>
             </el-row>
           </div>
@@ -35,31 +35,42 @@
         <el-row :gutter="5">
           <el-col :span="6">
             爬取站点:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.targetWebsiteName" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
             站点网址:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.targetWebsiteUrl" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
             执行爬虫:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.spiderName" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
-            执行权限:
-            <el-input style="width: 200px" disabled />
+            可执行范围:
+            <el-input v-model="selectedItem.range" style="width: 200px" disabled />
           </el-col>
           <el-col :span="24">
             爬取范围：
-            <el-input />
+            <el-input v-model="selectRange" :disabled="selectedItem.spiderType===1" />
             <span
               style="color: red"
             >接收参数：单题直接输入题号，范围使用“[起始题号-结束题号]”（范围仅支持数字题号），用“,”隔开。例：1000,1001,[1002-1009],1010</span>
           </el-col>
-          <el-button type="warning">检查爬取站点网络状态</el-button>
-          <el-button type="warning">检查爬取范围有效性</el-button>
-          <el-button type="primary">开始爬取</el-button>
+          <div v-show="showBtn">
+            <el-button type="info" @click="checkNetStatus()">跳转目标站点</el-button>
+            <el-button type="warning" @click="checkRange()">检查爬取范围有效性</el-button>
+            <el-button type="primary">开始爬取</el-button>
+          </div>
         </el-row>
+
+        <el-input
+          v-show="rangeCheckShow"
+          v-model="rangeCheckText"
+          resize="none"
+          autosize
+          disabled
+          type="textarea"
+        />
       </div>
     </el-card>
     <el-card>
@@ -72,6 +83,7 @@
 <script>
 import OJSiteCard from './components/OJSiteCard'
 import ScrapyStatusCard from './components/ScrapyStatusCard'
+import { getItems } from '@/api/spider'
 export default {
   name: 'GetProblems',
   components: {
@@ -80,42 +92,50 @@ export default {
   },
   data() {
     return {
-      fullOjs: [
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HDU_icon.png',
-          name: 'HDU'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/ZOJ_favicon.ico',
-          name: 'ZOJ'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HUST_icon.jpg',
-          name: 'HUSTOJ'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/poj.ico',
-          name: 'POJ'
-        }
-      ],
-      specOjs: [
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HDU_icon.png',
-          name: 'HDU'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/ZOJ_favicon.ico',
-          name: 'ZOJ'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HUST_icon.jpg',
-          name: 'HUSTOJ'
-        }
-      ]
+      fullOjs: [],
+      specOjs: [],
+      selectedItem: '',
+      selectRange: '',
+      showBtn: false,
+      rangeCheckShow: false,
+
+      rangeCheckText: ''
     }
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    this.getSpiderItems()
+  },
+  methods: {
+    getSpiderItems() {
+      getItems({
+        pageNum: '1',
+        pageSize: '100'
+      }).then(response => {
+        const res = response.data
+        for (const i of res.datas[0]) {
+          if (i.spiderType === 1) {
+            this.fullOjs.push(i)
+          } else if (i.spiderType === 2) {
+            this.specOjs.push(i)
+          }
+        }
+      })
+    },
+    selectSpiderItem(item) {
+      item.range = item.spiderType === 1 ? '全站爬取' : '范围爬取'
+      this.selectRange = item.spiderType === 1 ? 'All' : ''
+      this.selectedItem = item
+      this.showBtn = true
+    },
+    checkNetStatus() {
+      window.open('http://' + this.selectedItem.targetWebsiteUrl)
+    },
+    checkRange() {
+      //  TODO: 让后端检查爬取范围有效性
+      this.rangeCheckShow = true
+      this.rangeCheckText = 'All - 全站爬取 - 已爬取XXX'
+    }
+  }
 }
 </script>
 
@@ -130,8 +150,11 @@ export default {
   }
   .el-card {
     margin-bottom: 14px;
-    >>> .el-col {
+    >>> .el-row {
       margin-bottom: 10px;
+      .el-col {
+        margin-bottom: 10px;
+      }
     }
   }
 }
