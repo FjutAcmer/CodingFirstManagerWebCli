@@ -2,7 +2,7 @@
   <el-card>
     <div slot="header">
       爬虫服务器状态
-      <span style="color: red">（状态获取于：{{ lastUpdateAt }}）</span>
+      <span style="color: green">（服务器状态获取于：{{ lastUpdateAt }}）</span>
       <el-button size="mini" type="primary" icon="el-icon-refresh" @click="getSpiderStatus()">重新获取状态</el-button>
     </div>
     <div>
