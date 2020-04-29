@@ -52,7 +52,6 @@ export default {
         this.spiderStatus = res.datas[0]
         this.lastUpdateAt = new Date().toLocaleString()
       })
-      console.log(this.spiderStatus)
     }
   }
 }

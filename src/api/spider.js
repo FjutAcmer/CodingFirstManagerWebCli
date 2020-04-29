@@ -6,3 +6,11 @@ export function getStatus() {
     method: 'post'
   })
 }
+
+export function getItems(data) {
+  return request({
+    url: '/admin/spider/items',
+    method: 'post',
+    params: data
+  })
+}
