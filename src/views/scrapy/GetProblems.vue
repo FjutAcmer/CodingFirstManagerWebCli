@@ -163,7 +163,7 @@ export default {
     checkRange() {
       //  TODO: 让后端检查爬取范围有效性
       this.rangeCheckShow = true
-      this.rangeCheckText = 'TODO 还没做完'
+      this.rangeCheckText = 'TODO 还没做完！！！'
     },
     startSpider() {
       if (this.selectRange === '') {
