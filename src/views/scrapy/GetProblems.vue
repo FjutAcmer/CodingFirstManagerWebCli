@@ -116,7 +116,7 @@
 
 <script>
 import OJSiteCard from './components/OJSiteCard'
-import SpiderStatusCard from './components/SpiderStatusCard'
+import SpiderStatusCard from '../scrapy-manager/components/SpiderStatusCard'
 import store from '@/store'
 import { getItems, startSpider } from '@/api/spider'
 export default {

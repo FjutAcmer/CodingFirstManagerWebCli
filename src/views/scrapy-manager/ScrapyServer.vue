@@ -1,11 +1,16 @@
 <template>
   <div class="app-container">
-    <div>爬虫服务器</div>
+    <SpiderStatusCard />
   </div>
 </template>
 
 <script>
-export default {}
+import SpiderStatusCard from './components/SpiderStatusCard.vue'
+export default {
+  components: {
+    SpiderStatusCard
+  }
+}
 </script>
 
 <style>

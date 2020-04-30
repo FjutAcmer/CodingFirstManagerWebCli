@@ -64,7 +64,11 @@
                   <strong>{{ item.createUser?item.createUser:'未知' }}</strong>
                   执行；
                 </span>
-                <el-button size="mini" type="primary">查看详细日志</el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="toLog(selectedItem.spiderName, item.jobId)"
+                >查看详细日志</el-button>
               </p>
               <p v-if="selectedItem.jobs.length===0" class="log-list-item">无记录</p>
             </div>
@@ -77,7 +81,7 @@
 
 <script>
 import ScrapyCard from './components/ScrapyCard'
-import SpiderStatusCard from '../scrapy/components/SpiderStatusCard.vue'
+import SpiderStatusCard from './components/SpiderStatusCard.vue'
 import { getItems, getSpiderJobList } from '@/api/spider'
 export default {
   name: 'QueryScrapy',
@@ -125,6 +129,15 @@ export default {
     selectItem(item) {
       this.selectedItem = item
       this.getSpiderJobList()
+    },
+    toLog(spiderName, jobId) {
+      this.$router.push({
+        name: 'SpiderLog',
+        query: {
+          spiderName: spiderName,
+          jobId: jobId
+        }
+      })
     }
   }
 }

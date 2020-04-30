@@ -26,7 +26,7 @@ export default {
   &:hover {
     cursor: pointer;
     .name-span {
-      color: blue;
+      color: lightblue;
       font-weight: bold;
     }
   }

@@ -23,11 +23,19 @@ export function startSpider(data) {
   })
 }
 
-export function getSpiderLog(data) {
+export function getSpiderLogRealtime(data) {
   return request({
-    url: '/admin/spider/log',
+    url: '/admin/spider/log/realtime',
     method: 'post',
     data: data
+  })
+}
+
+export function getSpiderJobInfo(data) {
+  return request({
+    url: '/admin/spider/job/info',
+    method: 'post',
+    params: data
   })
 }
 

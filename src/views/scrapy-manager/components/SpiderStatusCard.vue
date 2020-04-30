@@ -57,5 +57,15 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.el-card {
+  >>> .el-card__header {
+    background-color: #eef1f6;
+  }
+  .el-row {
+    .el-col {
+      margin-bottom: 10px;
+    }
+  }
+}
 </style>
