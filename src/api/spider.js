@@ -30,3 +30,11 @@ export function getSpiderLog(data) {
     data: data
   })
 }
+
+export function getSpiderJobList(data) {
+  return request({
+    url: '/admin/spider/job/list',
+    method: 'get',
+    params: data
+  })
+}

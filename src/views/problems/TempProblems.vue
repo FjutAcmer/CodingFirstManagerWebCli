@@ -14,13 +14,34 @@
         @keyup.enter.native="handleFilter"
       />
       <el-input
-        v-model="problemsQuery.title"
-        placeholder="标题"
-        style="width: 220px;"
+        placeholder="爬虫任务"
+        style="width: 140px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-
+      <el-input
+        placeholder="执行爬虫"
+        style="width: 140px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="problemsQuery.title"
+        placeholder="标题"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-select
+        v-model="problemsQuery.isLocalized"
+        placeholder="本地化状态"
+        style="width: 140px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      >
+        <el-option key="1" label="已本地化" value="1" />
+        <el-option key="2" label="未本地化" value="2" />
+      </el-select>
       <el-button
         v-waves
         class="filter-item"
@@ -29,7 +50,6 @@
         @click="handleFilter"
       >搜索</el-button>
       <el-button v-waves class="filter-item" type="primary" @click="clearFilter">查看所有</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="warning">爬取题目</el-button>`
     </div>
 
     <el-table
@@ -41,42 +61,50 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="标记ID" prop="id" sortable="custom" align="center" width="120">
+      <el-table-column label="标记ID" prop="id" align="center" width="80">
         <template slot-scope="{row}">
-          <span>{{ row.problemID }}00001</span>
+          <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="来源站点" width="140" align="center">
-        <template>
-          <!-- TODO: -->
-          <span>HDU</span>
+        <template slot-scope="{row}">
+          <span>{{ row.fromWebsite }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="源题目ID" width="140" align="center">
-        <template>
-          <!-- TODO: -->
-          <span>1000</span>
+      <el-table-column label="源题目ID" width="80" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.problemId }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="来自爬虫任务" width="120" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.spiderJob }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="执行爬虫" width="100" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.spiderName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="爬取时间" width="180" align="center">
+        <template slot-scope="{row}">
+          <span>{{ new Date(row.insertTime).toLocaleString() }}</span>
         </template>
       </el-table-column>
       <el-table-column label="标题" align="center">
         <template slot-scope="{row}">
-          <el-link type="primary" @click="goProblemDetail(row)">{{ row.title }}A+B问题</el-link>
+          <el-link type="primary" @click="goProblemDetail(row)">{{ row.problemTitle }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="来自爬虫任务" width="160" align="center">
-        <template>
-          <!-- TODO: -->
-          <span>FULLHDU-de4a8</span>
-        </template>
-      </el-table-column>
+
       <el-table-column label="状态" width="120" align="center">
-        <template>
-          <!-- TODO: -->
-          <span>暂未本地化</span>
+        <template slot-scope="{row}">
+          <span>{{ row.isLocalized==='1'?'已本地化':'未本地化' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding">
         <template slot-scope="{row,$index}">
+          <el-button size="mini" type="success">本地化</el-button>
           <el-button size="mini" type="primary" @click="handleUpdate(row)">修改</el-button>
           <el-button
             size="mini"
@@ -86,8 +114,7 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <pagination
+    <Pagination
       v-show="total>0"
       :total="total"
       :page.sync="problemsQuery.page"
@@ -106,7 +133,7 @@
 </template>
 
 <script>
-// import { fetchProblemList, deleteProblem } from '@/api/problems'
+import { getList } from '@/api/spider-problem'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 
@@ -127,15 +154,9 @@ export default {
         page: 1,
         limit: 20,
         sort: '+id',
-        title: undefined
-      },
-      tagsQuery: {
-        page: 1,
-        limit: 100,
-        sort: '+id'
-      },
-
-      rules: {}
+        title: undefined,
+        isLocalized: undefined
+      }
     }
   },
   created() {
@@ -143,28 +164,26 @@ export default {
   },
   methods: {
     getProblems() {
-      // this.listLoading = true
-      // fetchProblemList(this.problemsQuery).then(response => {
-      //   const res = response.data
-      //   this.problems = res.data.list
-      //   this.total = res.data.total
-      //   setTimeout(() => {
-      //     this.listLoading = false
-      //   }, 1.5 * 1000)
-      // })
+      this.listLoading = true
+      getList(this.problemsQuery).then(response => {
+        const res = response.data
+        this.problems = res.datas[0]
+        this.total = res.datas[1]
+        this.listLoading = false
+      })
     },
     handleFilter() {
-      // this.problemsQuery.page = 1
-      // this.getProblems()
+      this.problemsQuery.page = 1
+      this.getProblems()
     },
     clearFilter() {
-      // this.problemsQuery = {
-      //   page: 1,
-      //   limit: 20,
-      //   sort: '+id',
-      //   title: undefined
-      // }
-      // this.getProblems()
+      this.problemsQuery = {
+        page: 1,
+        limit: 20,
+        sort: '+id',
+        title: undefined
+      }
+      this.getProblems()
     },
     handleModifyStatus(row, status) {
       // this.$message({
@@ -174,10 +193,10 @@ export default {
       // row.status = status
     },
     sortChange(data) {
-      // const { prop, order } = data
-      // if (prop === 'id') {
-      //   this.sortByID(order)
-      // }
+      const { prop, order } = data
+      if (prop === 'id') {
+        this.sortByID(order)
+      }
     },
     sortByID(order) {
       // if (order === 'ascending') {

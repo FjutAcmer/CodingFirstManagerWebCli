@@ -2,11 +2,14 @@
   <div class="app-container">
     <SpiderStatusCard />
     <el-card>
-      <div slot="header">已有爬虫程序</div>
+      <div slot="header">
+        已有爬虫程序
+        <span style="color: red">（双击图标选取）</span>
+      </div>
       <div>
         <el-row :gutter="5">
           <el-col v-for="item in scrapys" :key="item" :span="2">
-            <ScrapyCard :data="item" />
+            <ScrapyCard :data="item" @dblclick.native="selectItem(item)" />
           </el-col>
         </el-row>
       </div>
@@ -17,46 +20,56 @@
         <el-row :gutter="5">
           <el-col :span="6">
             爬虫名:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.spiderName" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
             爬虫程序名:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.spiderName" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
             目标站点名:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.targetWebsiteName" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
             站点地址:
-            <el-input style="width: 200px" disabled />
-          </el-col>
-          <el-col :span="6">
-            反反爬措施:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.targetWebsiteUrl" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
             部署状态:
-            <el-input style="width: 200px" disabled />
+            <el-input v-model="selectedItem.deploy" style="width: 200px" disabled />
           </el-col>
           <el-col :span="6">
-            需要权限:
-            <el-input style="width: 200px" disabled />
+            爬虫类型:
+            <el-input v-model="selectedItem.type" style="width: 200px" disabled />
+          </el-col>
+          <el-col :span="24">
+            反反爬措施:
+            <el-input v-model="selectedItem.antiMeasures" disabled />
           </el-col>
 
           <el-col :span="24">
-            当前状态:
-            <el-input type="textarea" rows="4" disabled />
-          </el-col>
-          <el-col :span="24">
-            爬虫历史任务:
-            <el-input type="textarea" rows="4" disabled />
+            爬取日志记录:
+            <div v-if="showLogList" class="log-list">
+              <p v-for="item in selectedItem.jobs" :key="item" class="log-list-item">
+                <span>
+                  爬取记录ID：
+                  <strong>{{ item.id }}；</strong>
+                </span>
+                <span>
+                  爬取任务ID：
+                  <strong>{{ item.jobId }}；</strong>
+                </span>
+                <span>
+                  由
+                  <strong>{{ item.createUser?item.createUser:'未知' }}</strong>
+                  执行；
+                </span>
+                <el-button size="mini" type="primary">查看详细日志</el-button>
+              </p>
+              <p v-if="selectedItem.jobs.length===0" class="log-list-item">无记录</p>
+            </div>
           </el-col>
         </el-row>
-        <el-divider />
-        <el-button type="primary">查询</el-button>
-        <el-button type="warning">查看该爬虫历史任务</el-button>
-        <el-button type="info">查看记录日志</el-button>
       </div>
     </el-card>
   </div>
@@ -65,7 +78,7 @@
 <script>
 import ScrapyCard from './components/ScrapyCard'
 import SpiderStatusCard from '../scrapy/components/SpiderStatusCard.vue'
-
+import { getItems, getSpiderJobList } from '@/api/spider'
 export default {
   name: 'QueryScrapy',
   components: {
@@ -74,36 +87,46 @@ export default {
   },
   data() {
     return {
-      scrapys: [
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HDU_icon.png',
-          name: 'FullHDU'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HDU_icon.png',
-          name: 'SpecHDU'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/ZOJ_favicon.ico',
-          name: 'ZOJ1'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/ZOJ_favicon.ico',
-          name: 'ZOJ2'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HUST_icon.jpg',
-          name: 'HUSTOJ'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/poj.ico',
-          name: 'POJ'
-        }
-      ]
+      scrapys: [],
+      selectedItem: '',
+      showLogList: false
     }
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    this.getSpiderItems()
+  },
+  methods: {
+    getSpiderItems() {
+      this.scrapys = []
+      getItems({
+        pageNum: '1',
+        pageSize: '100'
+      }).then(response => {
+        const res = response.data
+        for (const item of res.datas[0]) {
+          item.deploy = item.deployStatus === 1 ? '已部署' : '未知状态'
+          item.type = item.spiderType === 1 ? '全站爬取' : '范围爬取'
+          this.scrapys.push(item)
+        }
+      })
+    },
+    getSpiderJobList() {
+      this.selectedItem.jobs = []
+      this.showLogList = false
+      getSpiderJobList({
+        spiderName: this.selectedItem.spiderName
+      }).then(response => {
+        const res = response.data
+        this.selectedItem.jobs = res.datas[0]
+        console.log(this.selectedItem.jobs)
+        this.showLogList = true
+      })
+    },
+    selectItem(item) {
+      this.selectedItem = item
+      this.getSpiderJobList()
+    }
+  }
 }
 </script>
 
@@ -120,6 +143,16 @@ export default {
     margin-bottom: 14px;
     >>> .el-col {
       margin-bottom: 10px;
+    }
+    .log-list {
+      background-color: #f5f7fa;
+      border: 1px solid #dfe4ed;
+      color: #c0c4cc;
+      padding: 10px;
+      .log-list-item {
+        color: grey;
+        margin: 4px;
+      }
     }
   }
 }
