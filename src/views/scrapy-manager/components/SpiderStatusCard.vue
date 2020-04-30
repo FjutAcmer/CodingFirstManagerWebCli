@@ -9,7 +9,7 @@
       <el-row :gutter="10">
         <el-col :span="6">
           服务器状态：
-          <el-input v-model="spiderStatus.status" style="width: 150px" disabled />
+          <el-input v-model="spiderStatus.statusStr" style="width: 150px" disabled />
         </el-col>
         <el-col :span="6">
           部署节点名：
@@ -50,6 +50,10 @@ export default {
       getStatus().then(response => {
         const res = response.data
         this.spiderStatus = res.datas[0]
+        this.spiderStatus.statusStr =
+          this.spiderStatus.status === 'ok'
+            ? '连接正常'
+            : this.spiderStatus.status
         this.lastUpdateAt = new Date().toLocaleString()
       })
     }

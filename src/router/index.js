@@ -198,6 +198,13 @@ export const asyncRoutes = [
         component: () => import('@/views/scrapy/SimProblem'),
         name: 'SimProblem',
         meta: { title: '题目查重', noCache: true }
+      },
+      {
+        path: 'ProblemLocalized',
+        component: () => import('@/views/scrapy/ProblemLocalized'),
+        name: 'ProblemLocalized',
+        meta: { title: '题目本地化', noCache: true }
+
       }
     ]
   },
