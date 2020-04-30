@@ -213,16 +213,29 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: 'ScrapyServer',
+        component: () => import('@/views/scrapy-manager/ScrapyServer'),
+        name: 'ScrapyServer',
+        meta: { title: '爬虫服务器', noCache: true }
+      },
+      {
         path: 'QueryScrapy',
         component: () => import('@/views/scrapy-manager/QueryScrapy'),
         name: 'QueryScrapy',
-        meta: { title: '爬虫状态查询', noCache: true }
+        meta: { title: '爬虫状态', noCache: true }
       },
       {
         path: 'SetScrapy',
         component: () => import('@/views/scrapy-manager/SetScrapy'),
         name: 'SetScrapy',
-        meta: { title: '爬虫任务设置', noCache: true }
+        meta: { title: '爬虫任务', noCache: true }
+      },
+      {
+        path: 'SpiderLog',
+        component: () => import('@/views/scrapy-manager/SpiderLog'),
+        name: 'SpiderLog',
+        meta: { title: '爬虫任务日志', noCache: true },
+        hidden: true
       }
     ]
   },

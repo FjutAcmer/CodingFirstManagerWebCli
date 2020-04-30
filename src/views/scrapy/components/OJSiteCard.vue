@@ -27,7 +27,7 @@ export default {
   &:hover {
     cursor: pointer;
     .name-span {
-      color: green;
+      color: lightblue;
     }
   }
   .oj-icon-img {

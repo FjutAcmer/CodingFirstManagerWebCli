@@ -7,11 +7,14 @@
     <el-row :gutter="10">
       <el-col :span="12">
         <el-card>
-          <div slot="header">全站爬取</div>
+          <div slot="header">
+            全站爬取
+            <span style="color: red">（双击图标选取）</span>
+          </div>
           <div>
             <el-row :gutter="5">
               <el-col v-for="item in fullOjs" :key="item.id" :span="4">
-                <OJSiteCard :data="item" @click.native="selectSpiderItem(item)" />
+                <OJSiteCard :data="item" @dblclick.native="selectSpiderItem(item)" />
               </el-col>
             </el-row>
           </div>
@@ -19,11 +22,14 @@
       </el-col>
       <el-col :span="12">
         <el-card>
-          <div slot="header">范围爬取</div>
+          <div slot="header">
+            范围爬取
+            <span style="color: red">（双击图标选取）</span>
+          </div>
           <div>
             <el-row :gutter="5">
               <el-col v-for="item in specOjs" :key="item.id" :span="4">
-                <OJSiteCard :data="item" @click.native="selectSpiderItem(item)" />
+                <OJSiteCard :data="item" @dblclick.native="selectSpiderItem(item)" />
               </el-col>
             </el-row>
           </div>
@@ -79,7 +85,12 @@
       </div>
       <div v-if="jobInfo">
         <div v-if="jobInfo.status==='ok'">
-          <p style="color: green">爬虫启动成功！TODO 本次任务ID</p>
+          <p style="color: green">
+            爬虫启动成功！本次任务的数据库ID为
+            <strong>{{ jobInfo2.id }}</strong>
+            ，
+            实际启动时间为{{ new Date(jobInfo2.actualStartTime).toLocaleString() }}
+          </p>
           <p>
             爬虫服务器节点：
             <strong>{{ jobInfo.node_name }}</strong>
@@ -99,18 +110,14 @@
       <div v-else>
         <span style="color: red">本次任务未开始</span>
       </div>
-      <!-- <el-dialog title="本次任务实时日志" :visible.sync="showLog">
-        <el-button icon="el-icon-refresh" type="primary" size="mini" @click="refreshLog()">刷新</el-button>
-        <pre>{{ jobLog }}</pre>
-      </el-dialog>-->
     </el-card>
   </div>
 </template>
 
 <script>
 import OJSiteCard from './components/OJSiteCard'
-import SpiderStatusCard from './components/SpiderStatusCard'
-
+import SpiderStatusCard from '../scrapy-manager/components/SpiderStatusCard'
+import store from '@/store'
 import { getItems, startSpider } from '@/api/spider'
 export default {
   name: 'GetProblems',
@@ -127,7 +134,8 @@ export default {
       showBtn: false,
       rangeCheckShow: false,
       rangeCheckText: '',
-      jobInfo: ''
+      jobInfo: '',
+      jobInfo2: ''
       // showLog: false,
       // jobLog: ''
     }
@@ -137,6 +145,8 @@ export default {
   },
   methods: {
     getSpiderItems() {
+      this.fullOjs = []
+      this.specOjs = []
       getItems({
         pageNum: '1',
         pageSize: '100'
@@ -163,7 +173,7 @@ export default {
     checkRange() {
       //  TODO: 让后端检查爬取范围有效性
       this.rangeCheckShow = true
-      this.rangeCheckText = 'TODO 还没做完'
+      this.rangeCheckText = 'TODO: 还没做完！！！'
     },
     startSpider() {
       if (this.selectRange === '') {
@@ -172,26 +182,22 @@ export default {
       }
       startSpider({
         spiderName: this.selectedItem.spiderName,
-        range: this.selectRange
+        range: this.selectRange,
+        username: store.getters.name
       }).then(response => {
         const res = response.data
         this.jobInfo = res.datas[0]
+        this.jobInfo2 = res.datas[1]
       })
     },
     showRealTimeLog() {
-      //  TODO: 路由跳转
-      this.$router.push('/spiderlog')
-      // this.showLog = true
-      // this.refreshLog()
-    },
-    refreshLog() {
-      // getSpiderLog({
-      //   spiderName: this.selectedItem.spiderName,
-      //   jobId: this.jobInfo.jobid
-      // }).then(response => {
-      //   const res = response.data
-      //   this.jobLog = res.datas[0]
-      // })
+      this.$router.push({
+        name: 'SpiderLog',
+        query: {
+          spiderName: this.selectedItem.spiderName,
+          jobId: this.jobInfo.jobid
+        }
+      })
     }
   }
 }
@@ -203,7 +209,7 @@ export default {
     background-color: lightyellow;
     color: red;
   }
-  & >>> .el-card__header {
+  >>> .el-card__header {
     background-color: #eef1f6;
   }
   .el-card {
@@ -214,10 +220,6 @@ export default {
         margin-bottom: 10px;
       }
     }
-  }
-  >>> .pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
   }
 }
 </style>
