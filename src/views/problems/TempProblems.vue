@@ -61,7 +61,7 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="标记ID" prop="id" align="center" width="80">
+      <el-table-column label="临时题目ID" prop="id" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
@@ -104,7 +104,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="220" class-name="small-padding">
         <template slot-scope="{row,$index}">
-          <el-button size="mini" type="success">本地化</el-button>
+          <el-button size="mini" type="success" @click="toLocalized(row)">本地化</el-button>
           <el-button size="mini" type="primary" @click="handleUpdate(row)">修改</el-button>
           <el-button
             size="mini"
@@ -163,6 +163,14 @@ export default {
     this.getProblems()
   },
   methods: {
+    toLocalized(row) {
+      this.$router.push({
+        name: 'ProblemLocalized',
+        query: {
+          id: row.id
+        }
+      })
+    },
     getProblems() {
       this.listLoading = true
       getList(this.problemsQuery).then(response => {

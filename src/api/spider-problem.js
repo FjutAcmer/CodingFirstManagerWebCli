@@ -7,3 +7,11 @@ export function getList(params) {
     params: params
   })
 }
+
+export function getInfo(params) {
+  return request({
+    url: '/admin/spider/problem/info',
+    method: 'get',
+    params: params
+  })
+}
