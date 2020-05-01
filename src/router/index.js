@@ -249,6 +249,13 @@ export const asyncRoutes = [
         meta: { title: '爬取暂存题库', noCache: true }
       },
       {
+        path: 'TempProblemDetail',
+        component: () => import('@/views/problems/TempProblemDetail'),
+        name: 'TempProblemDetail',
+        meta: { title: '爬取题目详情', noCache: true },
+        hidden: true
+      },
+      {
         path: 'VJProblems',
         component: () => import('@/views/problems/VJProblems'),
         name: 'VJProblems',

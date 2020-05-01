@@ -132,7 +132,6 @@ export default {
     toOriginUrl(val) {
       window.open(val, '_blank')
     },
-
     getProblemInfo() {
       getInfo({
         id: this.id
