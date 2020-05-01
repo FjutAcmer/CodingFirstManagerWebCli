@@ -143,34 +143,14 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/permission',
+    path: '/',
     component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
-    name: 'Permission',
-    meta: {
-      title: '权限管理',
-      icon: 'lock',
-      roles: ['superAdmin'] // you can set roles in root nav
-    },
     children: [
       {
-        path: 'RolePermission',
-        component: () => import('@/views/permission/RolePermission'),
-        name: 'RolePermission',
-        meta: {
-          title: '角色权限',
-          roles: ['superAdmin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'AdminList',
-        component: () => import('@/views/permission/AdminList'),
-        name: 'AdminList',
-        meta: {
-          title: '管理员列表',
-          roles: ['superAdmin']
-        }
+        path: 'PermissionManager',
+        component: () => import('@/views/permission/PermissionManager'),
+        name: 'PermissionManager',
+        meta: { title: '权限管理', icon: 'lock', permission: 21 }
       }
     ]
   },
