@@ -61,7 +61,7 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="标记ID" prop="id" align="center" width="80">
+      <el-table-column label="临时题目ID" prop="id" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
@@ -76,7 +76,7 @@
           <span>{{ row.problemId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="来自爬虫任务" width="120" align="center">
+      <el-table-column label="爬虫任务ID" width="100" align="center">
         <template slot-scope="{row}">
           <span>{{ row.spiderJob }}</span>
         </template>
@@ -102,10 +102,9 @@
           <span>{{ row.isLocalized==='1'?'已本地化':'未本地化' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="220" class-name="small-padding">
+      <el-table-column label="操作" align="center" width="160" class-name="small-padding">
         <template slot-scope="{row,$index}">
-          <el-button size="mini" type="success">本地化</el-button>
-          <el-button size="mini" type="primary" @click="handleUpdate(row)">修改</el-button>
+          <el-button size="mini" type="success" @click="toLocalized(row)">本地化</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -163,6 +162,14 @@ export default {
     this.getProblems()
   },
   methods: {
+    toLocalized(row) {
+      this.$router.push({
+        name: 'ProblemLocalized',
+        query: {
+          id: row.id
+        }
+      })
+    },
     getProblems() {
       this.listLoading = true
       getList(this.problemsQuery).then(response => {
@@ -231,10 +238,10 @@ export default {
       // })
     },
     goProblemDetail(row) {
-      // this.$router.push({
-      //   path: '/problems/ProblemDetail',
-      //   query: { id: row.problemID }
-      // })
+      this.$router.push({
+        name: 'TempProblemDetail',
+        query: { id: row.id }
+      })
     }
   }
 }

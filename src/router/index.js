@@ -171,7 +171,7 @@ export const asyncRoutes = [
         path: 'GetProblems',
         component: () => import('@/views/scrapy/GetProblems'),
         name: 'GetProblems',
-        meta: { title: '爬取题目', noCache: true }
+        meta: { title: '爬取题目', noCache: false }
       },
       {
         path: 'SimProblem',
@@ -212,9 +212,9 @@ export const asyncRoutes = [
         meta: { title: '爬虫状态', noCache: true }
       },
       {
-        path: 'SetScrapy',
-        component: () => import('@/views/scrapy-manager/SetScrapy'),
-        name: 'SetScrapy',
+        path: 'SpiderMission',
+        component: () => import('@/views/scrapy-manager/SpiderMission'),
+        name: 'SpiderMission',
         meta: { title: '爬虫任务', noCache: true }
       },
       {
@@ -247,6 +247,13 @@ export const asyncRoutes = [
         component: () => import('@/views/problems/TempProblems'),
         name: 'TempProblems',
         meta: { title: '爬取暂存题库', noCache: true }
+      },
+      {
+        path: 'TempProblemDetail',
+        component: () => import('@/views/problems/TempProblemDetail'),
+        name: 'TempProblemDetail',
+        meta: { title: '爬取题目详情', noCache: true },
+        hidden: true
       },
       {
         path: 'VJProblems',
