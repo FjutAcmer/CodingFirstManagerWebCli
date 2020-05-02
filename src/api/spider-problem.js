@@ -15,3 +15,11 @@ export function getInfo(params) {
     params: params
   })
 }
+
+export function simTwoProblem(params) {
+  return request({
+    url: '/admin/spider/problem/sim',
+    method: 'post',
+    params: params
+  })
+}
