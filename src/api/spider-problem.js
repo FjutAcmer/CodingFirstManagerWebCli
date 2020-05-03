@@ -23,3 +23,19 @@ export function simTwoProblem(params) {
     params: params
   })
 }
+
+export function getProblemSimReport(params) {
+  return request({
+    url: '/admin/spider/problem/sim/report',
+    method: 'post',
+    params: params
+  })
+}
+
+export function localizedProblem(data) {
+  return request({
+    url: '/admin/spider/problem/localized',
+    method: 'post',
+    data: data
+  })
+}

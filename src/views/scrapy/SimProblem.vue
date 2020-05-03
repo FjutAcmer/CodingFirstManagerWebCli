@@ -139,7 +139,7 @@
     </el-row>
     <el-card>
       <el-button type="primary" @click="simProblem()">开始查重</el-button>
-      <el-button type="danger">本地化题目</el-button>
+      <el-button type="danger" @click="toLocalized()">本地化题目</el-button>
     </el-card>
     <el-card>
       <div slot="header">查重结果</div>
@@ -187,6 +187,14 @@ export default {
     }
   },
   methods: {
+    toLocalized() {
+      this.$router.push({
+        name: 'ProblemLocalized',
+        query: {
+          id: this.getProblemId
+        }
+      })
+    },
     querySpiderGetProblem() {
       getInfo({
         id: this.getProblemId
@@ -241,10 +249,10 @@ export default {
     pre {
       background-color: #f5f7fa;
       border: 1px solid #dfe4ed;
-      white-space: pre-wrap;
-      word-wrap: break-word;
       font-size: 16px;
       padding: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   }
 }

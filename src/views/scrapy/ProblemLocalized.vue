@@ -5,7 +5,7 @@
       <el-row :gutter="10">
         <el-col :span="6">
           临时题目ID：
-          <el-input v-model="id" :disabled="$route.query.id" />
+          <el-input v-model="id" disabled />
         </el-col>
         <el-col :span="6">
           来自网站名称：
@@ -38,11 +38,47 @@
       <el-divider />
       <span class="title-font">
         查重报告：
-        <span style="color: red">（无）</span>
-        <span style="color: green">（有）</span>
-        <el-button type="danger" size="mini">进行查重</el-button>
+        <span v-if="!simReports.length" style="color: red">
+          （无）
+          <el-button type="danger" size="mini" @click="toSim()">进行查重</el-button>
+        </span>
+        <span v-else>
+          <span style="color: green">（有）{{ totalSimNum }}</span>
+          <div>
+            综合相似度：
+            <span
+              v-if="totalSimNum>0.70"
+              style="color: green; font-size:28px;"
+            >{{ Number(totalSimNum*100).toFixed(2)+'%' }}</span>
+            <span
+              v-else
+              style="color: red; font-size:28px;"
+            >{{ Number(totalSimNum*100).toFixed(2)+'%' }}</span>
+          </div>
+        </span>
       </span>
-      <el-input type="textarea" rows="7" resize="none" disabled />
+      <div v-if="simReports.length">
+        <p v-for="item in simReports" :key="item.id">
+          <span>查重对象本地题目ID：</span>
+          <strong>{{ item.localProblemId }}</strong>
+          <el-button type="primary" size="mini">跳转查看</el-button>
+
+          <span>查重相似度：</span>
+          <span
+            v-if="item.simRecord.cos_sim_num>0.70"
+            style="color: green; font-size:24px;"
+          >{{ Number(item.simRecord.cos_sim_num*100).toFixed(2)+'%' }}</span>
+          <span
+            v-else
+            style="color: red; font-size:24px;"
+          >{{ Number(item.simRecord.cos_sim_num*100).toFixed(2)+'%' }}</span>
+        </p>
+      </div>
+      <el-divider />
+      <span style="color: red">（查重报告较少无法反应真正情况的，请进行全站题目相似度查重！）</span>
+      <el-button type="warning">添加测试集</el-button>
+      <el-button type="primary" @click="doLocalized()">执行本地化</el-button>
+
       <el-divider />
       <span class="title-font">题目标题：</span>
       <el-input v-model="newProblemInfo.problemTitle" />
@@ -81,7 +117,7 @@
       <Tinymce ref="editor" v-model="newProblemInfo.problemHint" :height="200" />
       <el-divider />
       <span class="title-font">是否特判（SPJ）</span>
-      <el-radio-group v-model="newProblemInfo.isSpj">
+      <el-radio-group v-model="newProblemInfo.spj">
         <el-radio :label="1">是</el-radio>
         <el-radio :label="0">否</el-radio>
       </el-radio-group>
@@ -90,15 +126,16 @@
       <span class="title-font">64位 INT类型</span>
       <el-input v-model="newProblemInfo.intFormat" />
       <el-divider />
-
-      <el-button type="warning">添加测试集</el-button>
-      <el-button type="primary">执行本地化</el-button>
     </el-card>
   </div>
 </template>
 
 <script>
-import { getInfo } from '@/api/spider-problem'
+import {
+  getInfo,
+  localizedProblem,
+  getProblemSimReport
+} from '@/api/spider-problem'
 import Tinymce from '@/components/Tinymce'
 export default {
   name: 'ProblemLocalized',
@@ -107,6 +144,8 @@ export default {
     return {
       id: '',
       problemInfo: '',
+      simReports: [],
+      totalSimNum: 0,
       newProblemInfo: {
         problemTitle: '',
         problemDescription: '',
@@ -115,7 +154,7 @@ export default {
         problemSampleInput: '',
         problemSampleOutput: '',
         problemHint: '',
-        isSpj: 0,
+        spj: 0,
         intFormat: '%lld'
       }
     }
@@ -132,12 +171,18 @@ export default {
     toOriginUrl(val) {
       window.open(val, '_blank')
     },
+    toSim() {
+      this.$router.push({
+        name: 'SimProblem'
+      })
+    },
     getProblemInfo() {
       getInfo({
         id: this.id
       }).then(response => {
         const res = response.data
         this.problemInfo = res.datas[0]
+        this.newProblemInfo.problemId = this.id
         this.newProblemInfo.problemTitle = this.problemInfo.problemTitle
         this.newProblemInfo.problemTimeLimit = this.problemInfo.problemTimeLimit
         this.newProblemInfo.problemMemoryLimit = this.problemInfo.problemMemoryLimit
@@ -146,6 +191,28 @@ export default {
         this.newProblemInfo.problemOutput = this.problemInfo.problemOutput
         this.newProblemInfo.problemSampleInput = this.problemInfo.problemSampleInput
         this.newProblemInfo.problemSampleOutput = this.problemInfo.problemSampleOutput
+      })
+      getProblemSimReport({ id: this.id }).then(response => {
+        const res = response.data
+        this.simReports = res.datas[0]
+        let totalCos = 0
+        for (const item of this.simReports) {
+          if (typeof item.simRecord.cos_sim_num === 'number') {
+            totalCos += item.simRecord.cos_sim_num
+          }
+        }
+
+        this.totalSimNum = totalCos / this.simReports.length
+      })
+    },
+    doLocalized() {
+      localizedProblem(this.newProblemInfo).then(response => {
+        const res = response.data
+        if (res.datas[0] === true) {
+          this.$message.success('本地化成功！')
+        } else {
+          this.$$message.error('本地化失败，稍后重试')
+        }
       })
     }
   }
