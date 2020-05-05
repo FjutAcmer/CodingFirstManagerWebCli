@@ -43,7 +43,7 @@
           <el-button type="danger" size="mini" @click="toSim()">进行查重</el-button>
         </span>
         <span v-else>
-          <span style="color: green">（有）{{ totalSimNum }}</span>
+          <span style="color: green">（有）</span>
           <div>
             综合相似度：
             <span
