@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-    <SpiderStatusCard />
     <el-card>
       <div slot="header">
         已有爬虫程序
@@ -81,13 +80,11 @@
 
 <script>
 import ScrapyCard from './components/ScrapyCard'
-import SpiderStatusCard from './components/SpiderStatusCard.vue'
 import { getItems, getSpiderJobList } from '@/api/spider'
 export default {
   name: 'QueryScrapy',
   components: {
-    ScrapyCard,
-    SpiderStatusCard
+    ScrapyCard
   },
   data() {
     return {

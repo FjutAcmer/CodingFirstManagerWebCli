@@ -188,44 +188,6 @@ export const asyncRoutes = [
       }
     ]
   },
-  // add by axiang [2020/4/17] 爬虫管理
-  {
-    path: '/scrapyManager',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'ScrapyManager',
-    meta: {
-      title: '爬虫管理',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'ScrapyServer',
-        component: () => import('@/views/scrapy-manager/ScrapyServer'),
-        name: 'ScrapyServer',
-        meta: { title: '爬虫服务器', noCache: true }
-      },
-      {
-        path: 'QueryScrapy',
-        component: () => import('@/views/scrapy-manager/QueryScrapy'),
-        name: 'QueryScrapy',
-        meta: { title: '爬虫状态', noCache: true }
-      },
-      {
-        path: 'SpiderMission',
-        component: () => import('@/views/scrapy-manager/SpiderMission'),
-        name: 'SpiderMission',
-        meta: { title: '爬虫任务', noCache: true }
-      },
-      {
-        path: 'SpiderLog',
-        component: () => import('@/views/scrapy-manager/SpiderLog'),
-        name: 'SpiderLog',
-        meta: { title: '爬虫任务日志', noCache: true },
-        hidden: true
-      }
-    ]
-  },
   {
     path: '/problems',
     component: Layout,
@@ -487,6 +449,44 @@ export const asyncRoutes = [
         component: () => import('@/views/discussion/DiscussionDetails'),
         name: 'DiscussionDetails',
         meta: { title: '讨论内容' },
+        hidden: true
+      }
+    ]
+  },
+  // add by axiang [2020/4/17] 爬虫管理
+  {
+    path: '/scrapyManager',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'ScrapyManager',
+    meta: {
+      title: '爬虫管理',
+      icon: 'nested'
+    },
+    children: [
+      {
+        path: 'ScrapyServer',
+        component: () => import('@/views/scrapy-manager/ScrapyServer'),
+        name: 'ScrapyServer',
+        meta: { title: '爬虫服务器', noCache: true }
+      },
+      {
+        path: 'QueryScrapy',
+        component: () => import('@/views/scrapy-manager/QueryScrapy'),
+        name: 'QueryScrapy',
+        meta: { title: '爬虫状态', noCache: true }
+      },
+      {
+        path: 'SpiderMission',
+        component: () => import('@/views/scrapy-manager/SpiderMission'),
+        name: 'SpiderMission',
+        meta: { title: '爬虫任务', noCache: true }
+      },
+      {
+        path: 'SpiderLog',
+        component: () => import('@/views/scrapy-manager/SpiderLog'),
+        name: 'SpiderLog',
+        meta: { title: '爬虫任务日志', noCache: true },
         hidden: true
       }
     ]

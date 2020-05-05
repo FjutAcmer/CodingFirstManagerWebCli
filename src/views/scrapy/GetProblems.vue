@@ -3,7 +3,6 @@
     <div class="aside warning-title">
       <span>请注意，如非必要，请尽量在网络空闲时期爬取题目。如需设置自动爬取策略，请到爬虫管理模块设置</span>
     </div>
-    <SpiderStatusCard />
     <el-row :gutter="10">
       <el-col :span="12">
         <el-card>
@@ -116,14 +115,12 @@
 
 <script>
 import OJSiteCard from './components/OJSiteCard'
-import SpiderStatusCard from '../scrapy-manager/components/SpiderStatusCard'
 import store from '@/store'
 import { getItems, startSpider } from '@/api/spider'
 export default {
   name: 'GetProblems',
   components: {
-    OJSiteCard,
-    SpiderStatusCard
+    OJSiteCard
   },
   data() {
     return {
