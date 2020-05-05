@@ -56,7 +56,11 @@
           </el-col>
           <el-col :span="24">
             爬取范围：
-            <el-input v-model="selectRange" :disabled="selectedItem.spiderType===1" />
+            <el-input
+              v-model="selectRange"
+              placeholder="形如 1000,1001,[1002-1009],1010"
+              :disabled="selectedItem.spiderType===1"
+            />
             <span
               style="color: red"
             >接收参数：单题直接输入题号，范围使用“[起始题号-结束题号]”（范围格式仅支持数字题号），用“,”隔开。例：1000,1001,[1002-1009],1010</span>

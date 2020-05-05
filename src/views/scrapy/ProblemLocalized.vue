@@ -74,10 +74,7 @@
           >{{ Number(item.simRecord.cos_sim_num*100).toFixed(2)+'%' }}</span>
         </p>
       </div>
-      <el-divider />
       <span style="color: red">（查重报告较少无法反应真正情况的，请进行全站题目相似度查重！）</span>
-      <el-button type="warning">添加测试集</el-button>
-      <el-button type="primary" @click="doLocalized()">执行本地化</el-button>
 
       <el-divider />
       <span class="title-font">题目标题：</span>
@@ -126,6 +123,8 @@
       <span class="title-font">64位 INT类型</span>
       <el-input v-model="newProblemInfo.intFormat" />
       <el-divider />
+      <el-button type="warning">添加测试集</el-button>
+      <el-button type="primary" @click="doLocalized()">执行本地化</el-button>
     </el-card>
   </div>
 </template>

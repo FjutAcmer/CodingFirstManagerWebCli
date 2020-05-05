@@ -208,20 +208,14 @@ export const asyncRoutes = [
         path: 'TempProblems',
         component: () => import('@/views/problems/TempProblems'),
         name: 'TempProblems',
-        meta: { title: '爬取暂存题库', noCache: true }
+        meta: { title: '爬取题库', noCache: true }
       },
-      {
-        path: 'TempProblemDetail',
-        component: () => import('@/views/problems/TempProblemDetail'),
-        name: 'TempProblemDetail',
-        meta: { title: '爬取题目详情', noCache: true },
-        hidden: true
-      },
+
       {
         path: 'VJProblems',
         component: () => import('@/views/problems/VJProblems'),
         name: 'VJProblems',
-        meta: { title: 'VJ题库', noCache: true }
+        meta: { title: 'VJ远程题库', noCache: true }
       },
       {
         path: 'ProblemsTag',
@@ -234,6 +228,13 @@ export const asyncRoutes = [
         component: () => import('@/views/problems/EditProblems'),
         name: 'EditProblems',
         meta: { title: '修改题目', noCache: true },
+        hidden: true
+      },
+      {
+        path: 'TempProblemDetail',
+        component: () => import('@/views/problems/TempProblemDetail'),
+        name: 'TempProblemDetail',
+        meta: { title: '爬取题目详情', noCache: true },
         hidden: true
       },
       {

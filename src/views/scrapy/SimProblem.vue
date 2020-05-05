@@ -84,7 +84,7 @@
               <el-col :span="12">
                 <strong>
                   题目题号
-                  <span style="color: red">（非数据库题号！请甄别）：</span>
+                  <span style="color: red">（非数据库题号！请甄别）</span>：
                 </strong>
                 <el-input
                   v-model="localProblemId"
