@@ -52,8 +52,8 @@
       </el-table-column>
       <el-table-column label="评测结果" width="250" align="center">
         <template slot-scope="{row}">
-          <el-button size="mini" plain>
-            <el-link>{{ row.result }}</el-link>
+          <el-button :type="resultType(row.result)" size="mini" plain>
+            <span>{{ row.result }}</span>
           </el-button>
         </template>
       </el-table-column>
@@ -192,7 +192,7 @@ export default {
       })
     },
     getDetail(row) {
-      this.codeDialogVisible = true;
+      this.codeDialogVisible = true
       this.listLoading = true
       fetchJudgeInfo(row.id).then(response => {
         const res = response.data
@@ -225,17 +225,27 @@ export default {
         this.handleFilter()
       }
     },
-    resultType(row) {
-      let type = ''
-      if (row.resultType('Accepted')) {
-        type = 'success'
-      } else if (row.result === 'Complication Error' || row.result === 'Presentation Error' ||
-        row.result === 'Runtime Error' || row.result === 'Wrong Answer' ||
-        row.result === 'Time Limit Exceeded' || row.result === 'Memory Limit Exceeded' ||
-        row.result === 'Output Limit Exceeded') {
-        type = 'danger'
+    resultType(result) {
+      if (result === 'Accepted' || result === 'Score') {
+        return 'success'
+      } else if (
+        result === 'Complication Error' ||
+        result === 'Presentation Error' ||
+        result === 'Runtime Error' ||
+        result === 'Wrong Answer' ||
+        result === 'Time Limit Exceeded' ||
+        result === 'Memory Limit Exceeded' ||
+        result === 'Output Limit Exceeded') {
+        return 'danger'
+      } else if (
+        result === 'Pending...' ||
+        result === 'Judging...' ||
+        result === 'Running...') {
+        return 'info'
+      } else if (result.substring(0, 5) === 'Score') {
+        return 'primary'
       }
-      return type
+      return 'warning'
     },
     goJudgeDetail(row) {
       this.$router.push({ path: '/judge/judgeDetail', query: { id: row.judgeID }})

@@ -28,17 +28,17 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="120">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品名称" width="300" align="center">
+      <el-table-column label="商品名称" width="200" align="center">
         <template slot-scope="{row}">
           <el-link type="primary" @click="handleUpdate(row)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="库存" width="100" align="center">
+      <el-table-column label="库存" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.stock === -1 ? 0 : row.stock }}</span>
         </template>
@@ -126,7 +126,7 @@ export default {
       listLoading: true,
       goodsQuery: {
         page: 1,
-        limit: 20,
+        limit: 5,
         sort: undefined,
         id: undefined,
         name: undefined
@@ -146,6 +146,7 @@ export default {
         const res = response.data
         this.goods = res.datas[0]
         this.total = res.datas[1]
+        // 延时等后端返回数据再渲染数据，否则数据渲染不上
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)

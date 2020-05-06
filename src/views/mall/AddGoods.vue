@@ -174,7 +174,7 @@ export default {
     margin-left: 30px;
   }
   .box-card {
-    width: 1400px;
+    width: 1200px;
     margin-top: 30px;
     margin-left: 30px;
   }

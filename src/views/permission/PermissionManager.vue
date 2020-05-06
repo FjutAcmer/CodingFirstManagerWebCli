@@ -27,7 +27,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="600" align="center">
+      <el-table-column label="用户名" width="439" align="center">
         <template slot-scope="{row}">
           <el-link type="primary" @click="getUserDetail(row)">{{ row.username }}</el-link>
         </template>

@@ -166,9 +166,6 @@ export default {
         const res = response.data
         this.userTitle = res.datas[0]
         this.total = res.datas[1]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
     },
     getTitleList() {
@@ -176,9 +173,6 @@ export default {
       fetchAllTitle().then(response => {
         const res = response.data
         this.titleList = res.datas[0]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
     },
     resetTemp() {

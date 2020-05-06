@@ -36,18 +36,17 @@
           <el-image
             style="width: 140px; height: 140px"
             :src="row.pictureUrl"
-            :fit="cover"
           />
         </template>
       </el-table-column>
       <el-table-column label="类型" width="250" align="center">
         <template slot-scope="{row}">
-          <span></span>
+          <span>{{ row.type === 0 ? '未定义' : row.type === 1 ? '形容词' : '名词头衔' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="拥有时长" width="250" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.lifeTime }}</span>
+          <span>{{ row.lifeTime === -1 ? '永久' : row.lifeTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
@@ -140,9 +139,6 @@ export default {
         const res = response.data
         this.titles = res.datas[0]
         this.total = res.datas[1]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
     },
     resetTemp() {

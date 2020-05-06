@@ -18,27 +18,46 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-card class="box-card">
+              <el-form-item label="手机号码">
+                <span>{{ props.row.phone }}</span>
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <span>{{ props.row.email }}</span>
+              </el-form-item>
+            </el-card>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="120" align="center">
+      <el-table-column label="用户名" width="140" align="center">
         <template slot-scope="{row}">
           <el-link type="primary" @click="getUserDetail(row)">{{ row.username }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" width="120" align="center">
+      <el-table-column label="昵称" width="150" align="center">
         <template slot-scope="{row}">
           <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Motto" width="380" align="center">
+      <el-table-column label="性别" width="80" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.gender }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Motto" width="400" align="center">
         <template slot-scope="{row}">
           <span>{{ row.motto }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ACB" width="80" align="center">
+      <el-table-column label="ACB" width="60" align="center">
         <template slot-scope="{row}">
           <span>{{ row.acb }}</span>
         </template>
@@ -46,16 +65,6 @@
       <el-table-column label="Rating" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.rating }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="手机号码" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Email" width="200" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.email }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
@@ -155,9 +164,6 @@ export default {
         const res = response.data
         this.users = res.datas[0]
         this.total = res.datas[1]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
     },
     handleFilter() {

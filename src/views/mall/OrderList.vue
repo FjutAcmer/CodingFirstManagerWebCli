@@ -36,17 +36,17 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="120">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品ID" width="160" align="center">
+      <el-table-column label="商品ID" width="100" align="center">
         <template slot-scope="{row}">
           <span>{{ row.goodsId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="200" align="center">
+      <el-table-column label="用户名" width="160" align="center">
         <template slot-scope="{row}">
           <el-link type="primary">{{ row.orderUser }}</el-link>
         </template>
@@ -61,7 +61,7 @@
           <span>{{ parseTime(row.orderTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核人" width="200" align="center">
+      <el-table-column label="审核人" width="160" align="center">
         <template slot-scope="{row}">
           <span>{{ row.reviewUser }}</span>
         </template>
