@@ -51,7 +51,6 @@
     <el-table
       v-loading="listLoading"
       :data="contests"
-      border
       fit
       highlight-current-row
       style="width: 98%;"
@@ -64,29 +63,29 @@
       </el-table-column>
       <el-table-column
         label="标题"
-        :width="contestsQuery.kind === '自定义' ? '400' : '488'"
+        :width="contestsQuery.kind === 5 ? '250' : '400'"
         align="center"
       >
         <template slot-scope="{row}">
           <el-link type="primary" @click="getContestDetail(row)">{{ row.title }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="开始时间" width="200" align="center">
+      <el-table-column label="开始时间" width="180" align="center">
         <template slot-scope="{row}">
           <span>{{ parseTime(row.beginTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束时间" width="200" align="center">
+      <el-table-column label="结束时间" width="180" align="center">
         <template slot-scope="{row}">
           <span>{{ parseTime(row.endTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="权限" width="120" align="center">
+      <el-table-column label="权限" width="100" align="center">
         <template slot-scope="{row}">
           <el-button size="mini" :type="getPermissionColor(row)" plain>{{ row.permission }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="120" align="center">
+      <el-table-column label="状态" width="100" align="center">
         <template slot-scope="{row}">
           <el-button
             size="mini"
@@ -96,7 +95,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="contestsQuery.kind === '自定义'"
+        v-if="contestsQuery.kind === 5"
         label="创建者"
         width="150"
         align="center"
@@ -188,6 +187,7 @@ export default {
     getContests() {
       this.listLoading = true
       this.contestsQuery.kind = this.getContestKind()
+      console.log(this.contestsQuery.kind)
       fetchContestList(this.contestsQuery).then(response => {
         const res = response.data
         this.contests = res.datas[0]
@@ -238,7 +238,7 @@ export default {
         return 2
       } else if (title === '正式赛') {
         return 3
-      } else if (title === '自定义') {
+      } else if (title === '自定义赛') {
         return 5
       } else {
         return 4

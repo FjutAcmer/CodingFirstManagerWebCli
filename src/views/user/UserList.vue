@@ -164,6 +164,9 @@ export default {
         const res = response.data
         this.users = res.datas[0]
         this.total = res.datas[1]
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
       })
     },
     handleFilter() {

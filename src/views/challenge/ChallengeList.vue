@@ -37,7 +37,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="模块名称" width="550" align="center">
+      <el-table-column label="模块名称" width="380" align="center">
         <template slot-scope="{row}">
           <el-link type="primary">{{ row.name }}</el-link>
         </template>
@@ -108,7 +108,7 @@
             <span>{{ row.problemId }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="标题" width="600" align="center">
+        <el-table-column label="标题" width="550" align="center">
           <template slot-scope="{row}">
             <el-link type="primary">{{ row.title }}</el-link>
           </template>
@@ -151,7 +151,7 @@ export default {
       listLoading: true,
       challengeQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         name: undefined
       },
@@ -187,7 +187,7 @@ export default {
     clearFilter() {
       this.challengeQuery = {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         name: undefined
       }

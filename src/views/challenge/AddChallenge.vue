@@ -4,7 +4,7 @@
       <el-card class="box-card">
         <el-form ref="challengeInfo" label-positon="left" :rules="addChallengeRules" :model="challengeInfo" label-width="120px">
           <el-form-item label="模块名称" prop="name">
-            <el-input v-model="challengeInfo.name" style="width: 1100px" />
+            <el-input v-model="challengeInfo.name" ref="inputName" style="width: 1100px" />
           </el-form-item>
           <el-form-item label="描述">
             <div class="text item">
@@ -253,7 +253,6 @@ export default {
             this.precondition.blockId = preId
             this.precondition.name = item.name // 获取信息
             this.precondition.num = score
-            console.log(this.precondition)
             const data = Object.assign({}, JSON.parse(JSON.stringify(this.precondition))) // 深复制模块信息push到列表中
             this.challengeInfo.preconditionBlocks.push(data)
           }
@@ -288,7 +287,9 @@ export default {
             this.goBack()
           })
         } else {
-          console.log('提交错误!!')
+          this.$nextTick(_ => {
+            this.$refs.inputName.$refs.input.focus()
+          })
           return false
         }
       })
@@ -303,7 +304,7 @@ export default {
 
 <style scoped>
   .box-card {
-    width: 1400px;
+    width: 1250px;
     margin-top: 30px;
     margin-left: 30px;
   }
