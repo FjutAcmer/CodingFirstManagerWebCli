@@ -26,7 +26,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="称号" width="400" align="center">
+      <el-table-column label="称号" width="200" align="center">
         <template slot-scope="{row}">
           <el-link type="primary">{{ row.name }}</el-link>
         </template>
@@ -34,7 +34,7 @@
       <el-table-column label="图片" width="200" align="center">
         <template slot-scope="{row}">
           <el-image
-            style="width: 140px; height: 140px"
+            style="width: 200px; height: 50px"
             :src="row.pictureUrl"
           />
         </template>
@@ -77,8 +77,17 @@
 
     <el-dialog title="添加称号" :visible.sync="createDialogVisible">
       <el-form ref="createTitle" :model="createTitleTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="称号ID" prop="titleID">
+        <el-form-item label="称号名称" prop="name">
           <el-input v-model="createTitleTemp.name" />
+        </el-form-item>
+        <el-form-item label="类型" prop="name">
+          <el-input v-model="createTitleTemp.type" />
+        </el-form-item>
+        <el-form-item label="图片" prop="name">
+          <el-image :src="createTitleTemp.pictureUrl" />
+        </el-form-item>
+        <el-form-item label="过期时间" prop="name">
+          <el-input v-model="createTitleTemp.lifeTime" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -94,7 +103,7 @@
 </template>
 
 <script>
-import { fetchTitleList, deleteTitle, updateTitle, createTitle } from '@/api/title'
+import { fetchTitleList, deleteTitle, createTitle } from '@/api/title'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 
@@ -121,11 +130,14 @@ export default {
       createTitleTemp: {
         id: '',
         type: '',
-        titleID: '',
+        name: '',
         pictureUrl: '',
         lifeTime: ''
       },
       rules: {
+        name: [
+          { required: true, message: '称号名称不能为空', trigger: 'change' }
+        ]
       }
     }
   },
@@ -139,6 +151,9 @@ export default {
         const res = response.data
         this.titles = res.datas[0]
         this.total = res.datas[1]
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
       })
     },
     resetTemp() {

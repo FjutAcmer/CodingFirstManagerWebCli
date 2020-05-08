@@ -26,7 +26,7 @@
           <el-form label-position="left" inline class="demo-table-expand">
             <el-card class="box-card">
               <el-form-item label="描述">
-                <span v-html="props.row.description"></span>
+                <span v-html="props.row.description" />
               </el-form-item>
             </el-card>
           </el-form>
@@ -54,7 +54,7 @@
       </el-table-column>
       <el-table-column label="所需积分" width="120" align="center">
         <template slot-scope="{row}">
-          <span >{{ row.preconditionTotalScore ? row.preconditionTotalScore : 0 }}</span>
+          <span>{{ row.preconditionTotalScore ? row.preconditionTotalScore : 0 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="170" class-name="small-padding">

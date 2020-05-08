@@ -3,7 +3,6 @@
     <el-card class="box-card discuss-content">
       <div slot="header" class="clearfix discuss-head">
         <span>{{ discussInfo.title }}</span>
-        <el-button style="float: right; padding: 3px 0" type="text">删除</el-button>
       </div>
       <div class="discuss-reply">
         <el-table
@@ -26,10 +25,10 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column width="1150">
+          <el-table-column width="1020">
             <template slot-scope="{row}">
               <pre>{{ row.text }}</pre>
-              <el-button style="float: right;" type="primary" size="mini">回复</el-button>
+              <el-button style="float: right;" type="primary" size="mini">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -94,9 +93,6 @@ export default {
         const res = response.data
         this.discussReply = res.datas[0]
         this.total = res.datas[1]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
     },
     getValue(row) {

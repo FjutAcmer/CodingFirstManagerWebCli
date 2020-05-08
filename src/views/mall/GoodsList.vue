@@ -33,7 +33,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品名称" width="200" align="center">
+      <el-table-column label="商品名称" width="190" align="center">
         <template slot-scope="{row}">
           <el-link type="primary" @click="handleUpdate(row)">{{ row.name }}</el-link>
         </template>

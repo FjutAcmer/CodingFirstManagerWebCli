@@ -4,7 +4,7 @@
       <el-card class="box-card">
         <el-form ref="goodsInfo" :rules="addGoodsRules" :model="goodsInfo" label-width="100px">
           <el-form-item label="商品名称" prop="name">
-            <el-input v-model="goodsInfo.name" />
+            <el-input ref="inputName" v-model="goodsInfo.name" />
           </el-form-item>
           <el-form-item label="ACB">
             <el-input-number v-model="goodsInfo.cost" :min="1" />
@@ -48,11 +48,12 @@
           </el-form-item>
           <el-form-item label="商品封面">
             <el-upload
+              ref="pictureUpload"
+              class="picture-upload show"
               action="https://jsonplaceholder.typicode.com/posts/"
               list-type="picture-card"
-              :on-preview="handlePictureCardPreview"
-              :on-remove="handleRemove"
-              limit="1"
+              :on-success="handlePictureCardPreview"
+              :on-error="handleUploadFail"
             >
               <i class="el-icon-plus" />
             </el-upload>
@@ -100,21 +101,23 @@ export default {
         cost: '',
         stock: '',
         goodsType: false,
-        buyLimit: '',
+        buyLimit: false,
         buyVerifyLimit: 1,
-        visible: '',
+        visible: true,
         pictureUrl: '',
         description: '',
         shelfUser: ''
       },
       addGoodsRules: {
-        goodsID: [
-          { required: true, message: '商品ID不能为空', trigger: 'change' }
-        ],
         name: [
           { required: true, message: '商品名称不能为空', trigger: 'change' }
         ]
       }
+    }
+  },
+  computed: {
+    uploadDisabled() {
+      return this.goodsInfo.pictureUrl !== ''
     }
   },
   methods: {
@@ -125,7 +128,6 @@ export default {
           this.goodsInfo.visible = this.goodsInfo.visible ? 1 : 0
           this.goodsInfo.buyLimit = this.buyLimitStatus.value ? -1 : this.goodsInfo.buyLimit // true为不限购，false则为限购数量
           this.goodsInfo.goodsType = this.goodsInfo.goodsType ? 1 : 0
-          console.log(this.goodsInfo.goodsType)
           this.goodsInfo.shelfUser = store.getters.name
           createGoods(this.goodsInfo).then(response => {
             const res = response.data
@@ -140,24 +142,35 @@ export default {
             this.goBack()
           })
         } else {
+          this.$nextTick(_ => {
+            this.$refs.inputName.$refs.input.focus()
+          })
           return false
         }
       })
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
+    handleUploadFail() {
+      this.$message.error('图片上传失败，请重试')
     },
-    handlePictureCardPreview(file) {
-      this.goodsInfo.pictureUrl = file.url
-      this.pictureDialogVisible = true
+    handleRemove() {
+      this.$nextTick(_ => {
+        this.$refs.pictureUpload.$refs.upload.$set('className', 'picture-upload hide')
+      })
+    },
+    handlePictureCardPreview(res, file) {
+      this.goodsInfo.pictureUrl = URL.createObjectURL(file.raw)
     },
     beforePictureUpload(file) {
       const isJPG = file.type === 'image/jpeg'
       const isPNG = file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG && !isPNG) {
         this.$message.error('只能上传JPG或PNG格式的图片')
       }
-      return isJPG && isPNG
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过200KB')
+      }
+      return isJPG && isPNG && !isLt2M
     },
     goBack() {
       this.$store.dispatch('tagsView/delView', this.$route)
@@ -180,5 +193,8 @@ export default {
   }
   .form-button {
     float: right;
+  }
+  .picture-upload .hide {
+    display: none;
   }
 </style>

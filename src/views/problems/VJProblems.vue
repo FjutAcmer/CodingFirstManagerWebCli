@@ -56,8 +56,8 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
-        <template slot-scope="{row,$index}">
-          <el-button size="mini" type="danger" @click="currentRow = row, currentIndex = $index, dialogVisible = true">
+        <template slot-scope="{}">
+          <el-button size="mini" type="danger" @click="handleDelete">
             删除
           </el-button>
         </template>
@@ -126,6 +126,9 @@ export default {
         const res = response.data
         this.vjProblems = res.datas[0].data
         this.total = res.datas[0].recordsTotal
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
       })
     },
     getOjs() {
@@ -133,14 +136,20 @@ export default {
       fetchOjs().then(response => {
         const res = response.data
         this.Ojs = res.datas[0]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
     },
     handleFilter() {
       this.vjProblemsQuery.page = 1
       this.getVJProblems()
+    },
+    handleDelete() {
+      this.$notify({
+        title: '失败',
+        message: '暂不提供删除功能',
+        type: 'error',
+        duration: 2000
+      })
+      this.dialogVisible = false
     },
     clearFilter() {
       this.vjProblemsQuery = {

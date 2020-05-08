@@ -4,7 +4,7 @@
       <el-card class="box-card">
         <el-form ref="challengeInfo" label-positon="left" :rules="addChallengeRules" :model="challengeInfo" label-width="120px">
           <el-form-item label="模块名称" prop="name">
-            <el-input v-model="challengeInfo.name" ref="inputName" style="width: 1100px" />
+            <el-input ref="inputName" v-model="challengeInfo.name" style="width: 1100px" />
           </el-form-item>
           <el-form-item label="描述">
             <div class="text item">
