@@ -3,7 +3,6 @@
     <div class="aside warning-title">
       <span>请注意，如非必要，请尽量在网络空闲时期爬取题目。如需设置自动爬取策略，请到爬虫管理模块设置</span>
     </div>
-    <SpiderStatusCard />
     <el-row :gutter="10">
       <el-col :span="12">
         <el-card>
@@ -57,7 +56,11 @@
           </el-col>
           <el-col :span="24">
             爬取范围：
-            <el-input v-model="selectRange" :disabled="selectedItem.spiderType===1" />
+            <el-input
+              v-model="selectRange"
+              placeholder="形如 1000,1001,[1002-1009],1010"
+              :disabled="selectedItem.spiderType===1"
+            />
             <span
               style="color: red"
             >接收参数：单题直接输入题号，范围使用“[起始题号-结束题号]”（范围格式仅支持数字题号），用“,”隔开。例：1000,1001,[1002-1009],1010</span>
@@ -116,14 +119,12 @@
 
 <script>
 import OJSiteCard from './components/OJSiteCard'
-import SpiderStatusCard from '../scrapy-manager/components/SpiderStatusCard'
 import store from '@/store'
 import { getItems, startSpider } from '@/api/spider'
 export default {
   name: 'GetProblems',
   components: {
-    OJSiteCard,
-    SpiderStatusCard
+    OJSiteCard
   },
   data() {
     return {
