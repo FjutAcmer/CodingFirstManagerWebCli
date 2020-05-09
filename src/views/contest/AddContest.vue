@@ -6,13 +6,15 @@
           <el-form-item label="标题" prop="title">
             <el-input ref="inputTitle" v-model="contestInfo.title" style="width: 1000px" />
           </el-form-item>
-          <el-form-item label="比赛起止时间" prop="beginTime">
+          <el-form-item label="比赛起止时间">
             <el-date-picker
-              v-model="registerBeginEndTime"
+              ref="contestBeginEndTime"
+              v-model="contestBeginEndTime"
               type="datetimerange"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              @change="checkTime"
             />
           </el-form-item>
           <el-form-item label="报名类型">
@@ -25,13 +27,15 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="报名起止时间" prop="registerBeginTime">
+          <el-form-item label="报名起止时间">
             <el-date-picker
-              v-model="contestBeginEndTime"
+              ref="registerBeginEndTime"
+              v-model="registerBeginEndTime"
               type="datetimerange"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              @change="checkTime"
             />
           </el-form-item>
           <el-form-item label="种类">
@@ -155,6 +159,13 @@ export default {
   name: 'AddContest',
   components: { Tinymce },
   data() {
+    const checkProblems = (rule, value, callback) => {
+      if (value === null || value === undefined || value === '') {
+        callback(new Error('请选择比赛题目'))
+      } else {
+        callback()
+      }
+    }
     return {
       contestBeginEndTime: [],
       registerBeginEndTime: [],
@@ -208,7 +219,7 @@ export default {
           { required: true, message: '标题不能为空', trigger: 'change' }
         ],
         problems: [
-          { required: true, message: '题目列表不能为空', trigger: 'change' }
+          { validator: checkProblems, trigger: 'change' }
         ]
       }
     }
@@ -229,24 +240,24 @@ export default {
     createContest() {
       this.$refs.contestInfo.validate(valid => {
         if (valid) {
-          this.contestInfo.beginTime = this.contestBeginEndTime[0]
-          this.contestInfo.endTime = this.contestBeginEndTime[1]
-          this.contestInfo.registerBeginTime = this.registerBeginEndTime[0]
-          this.contestInfo.registerEndTime = this.registerBeginEndTime[1]
           this.contestInfo.contestKind = this.getContestKind()
           this.contestInfo.permissionType = this.getPermissionType()
-          createContest(this.contestInfo).then(response => {
-            const res = response.data
-            if (res.code === 10000) {
-              this.$message({
-                title: '成功',
-                message: '创建成功',
-                type: 'success',
-                duration: 2000
-              })
-            }
-            this.goBack()
-          })
+          if (this.checkTime()) {
+            createContest(this.contestInfo).then(response => {
+              const res = response.data
+              if (res.code === 10000) {
+                this.$message({
+                  title: '成功',
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              }
+              this.goBack()
+            })
+          } else {
+            console.log('提交失败')
+          }
         } else {
           this.$nextTick(_ => {
             this.$refs.inputTitle.$refs.input.focus()
@@ -321,6 +332,27 @@ export default {
       } else {
         this.inputVisible = false
       }
+    },
+    checkTime() {
+      if (this.contestBeginEndTime.length !== 0 && this.registerBeginEndTime.length !== 0 &&
+        this.registerBeginEndTime[1] < this.contestBeginEndTime[0]) {
+        this.contestInfo.beginTime = this.contestBeginEndTime[0]
+        this.contestInfo.endTime = this.contestBeginEndTime[1]
+        this.contestInfo.registerBeginTime = this.registerBeginEndTime[0]
+        this.contestInfo.registerEndTime = this.registerBeginEndTime[1]
+      } else {
+        if (this.contestBeginEndTime.length === 0) {
+          this.$message.error('请选择比赛起止时间')
+          return false
+        } else if (this.registerBeginEndTime.length === 0) {
+          this.$message.error('请选择报名起止时间')
+          return false
+        } else {
+          this.$message.error('报名结束时间不能晚于比赛开始时间')
+        }
+        return false
+      }
+      return true
     },
     goBack() {
       this.$store.dispatch('tagsView/delView', this.$route)
