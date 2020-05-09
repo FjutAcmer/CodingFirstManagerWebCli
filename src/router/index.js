@@ -171,13 +171,20 @@ export const asyncRoutes = [
         path: 'GetProblems',
         component: () => import('@/views/scrapy/GetProblems'),
         name: 'GetProblems',
-        meta: { title: '爬取题目', noCache: true }
+        meta: { title: '爬取题目', noCache: false }
       },
       {
         path: 'SimProblem',
         component: () => import('@/views/scrapy/SimProblem'),
         name: 'SimProblem',
-        meta: { title: '题目查重', noCache: true }
+        meta: { title: '题目查重', noCache: false }
+      },
+      {
+        path: 'ProblemLocalized',
+        component: () => import('@/views/scrapy/ProblemLocalized'),
+        name: 'ProblemLocalized',
+        meta: { title: '题目本地化', noCache: true }
+
       }
     ]
   },
@@ -193,16 +200,29 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: 'ScrapyServer',
+        component: () => import('@/views/scrapy-manager/ScrapyServer'),
+        name: 'ScrapyServer',
+        meta: { title: '爬虫服务器', noCache: true }
+      },
+      {
         path: 'QueryScrapy',
         component: () => import('@/views/scrapy-manager/QueryScrapy'),
         name: 'QueryScrapy',
-        meta: { title: '爬虫状态查询', noCache: true }
+        meta: { title: '爬虫状态', noCache: true }
       },
       {
-        path: 'SetScrapy',
-        component: () => import('@/views/scrapy-manager/SetScrapy'),
-        name: 'SetScrapy',
-        meta: { title: '爬虫任务设置', noCache: true }
+        path: 'SpiderMission',
+        component: () => import('@/views/scrapy-manager/SpiderMission'),
+        name: 'SpiderMission',
+        meta: { title: '爬虫任务', noCache: true }
+      },
+      {
+        path: 'SpiderLog',
+        component: () => import('@/views/scrapy-manager/SpiderLog'),
+        name: 'SpiderLog',
+        meta: { title: '爬虫任务日志', noCache: true },
+        hidden: true
       }
     ]
   },
@@ -227,6 +247,13 @@ export const asyncRoutes = [
         component: () => import('@/views/problems/TempProblems'),
         name: 'TempProblems',
         meta: { title: '爬取暂存题库', noCache: true }
+      },
+      {
+        path: 'TempProblemDetail',
+        component: () => import('@/views/problems/TempProblemDetail'),
+        name: 'TempProblemDetail',
+        meta: { title: '爬取题目详情', noCache: true },
+        hidden: true
       },
       {
         path: 'VJProblems',

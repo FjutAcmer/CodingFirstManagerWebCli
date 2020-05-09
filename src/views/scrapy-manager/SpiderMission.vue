@@ -59,39 +59,34 @@
 
 <script>
 import ScrapyCard from './components/ScrapyCard'
+import { getItems } from '@/api/spider'
 export default {
-  name: 'SetScrapy',
+  name: 'SpiderMission',
   components: {
     ScrapyCard
   },
   data() {
     return {
-      scrapys: [
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HDU_icon.png',
-          name: 'FullHDU'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HDU_icon.png',
-          name: 'SpecHDU'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/ZOJ_favicon.ico',
-          name: 'ZOJ1'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/ZOJ_favicon.ico',
-          name: 'ZOJ2'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/HUST_icon.jpg',
-          name: 'HUSTOJ'
-        },
-        {
-          logoUrl: 'https://vjudge.net/static/images/remote_oj/poj.ico',
-          name: 'POJ'
+      scrapys: []
+    }
+  },
+  mounted() {
+    this.getSpiderItems()
+  },
+  methods: {
+    getSpiderItems() {
+      this.scrapys = []
+      getItems({
+        pageNum: '1',
+        pageSize: '100'
+      }).then(response => {
+        const res = response.data
+        for (const item of res.datas[0]) {
+          item.deploy = item.deployStatus === 1 ? '已部署' : '未知状态'
+          item.type = item.spiderType === 1 ? '全站爬取' : '范围爬取'
+          this.scrapys.push(item)
         }
-      ]
+      })
     }
   }
 }

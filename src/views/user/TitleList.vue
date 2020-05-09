@@ -1,16 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="titleQuery.name" placeholder="标签名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">
-        查看所有
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        添加称号
-      </el-button>
+      <el-input
+        v-model="titleQuery.name"
+        placeholder="标签名称"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >搜索</el-button>
+      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">查看所有</el-button>
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate"
+      >添加称号</el-button>
     </div>
 
     <el-table
@@ -33,16 +45,13 @@
       </el-table-column>
       <el-table-column label="图片" width="200" align="center">
         <template slot-scope="{row}">
-          <el-image
-            style="width: 200px; height: 50px"
-            :src="row.pictureUrl"
-          />
+          <el-image style="width: 140px; height: 140px" :src="row.pictureUrl" :fit="cover" />
         </template>
       </el-table-column>
       <el-table-column label="类型" width="250" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.type === 0 ? '未定义' : row.type === 1 ? '形容词' : '名词头衔' }}</span>
-        </template>
+        <!-- <template slot-scope="{row}">
+          <span />
+        </template> -->
       </el-table-column>
       <el-table-column label="拥有时长" width="250" align="center">
         <template slot-scope="{row}">
@@ -51,23 +60,29 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
         <template slot-scope="{row,$index}">
-          <el-button size="mini" type="primary" @click="currentRow = row, currentIndex = $index, updateDialogVisible = true">
-            修改
-          </el-button>
-          <el-button size="mini" type="danger" @click="currentRow = row, currentIndex = $index, deleteDialogVisible = true">
-            删除
-          </el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="currentRow = row, currentIndex = $index, updateDialogVisible = true"
+          >修改</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="currentRow = row, currentIndex = $index, deleteDialogVisible = true"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="titleQuery.page" :limit.sync="titleQuery.limit" @pagination="getTitles" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="titleQuery.page"
+      :limit.sync="titleQuery.limit"
+      @pagination="getTitles"
+    />
 
-    <el-dialog
-      title="提示"
-      :visible.sync="deleteDialogVisible"
-      width="30%"
-    >
+    <el-dialog title="提示" :visible.sync="deleteDialogVisible" width="30%">
       <span>确定删除该称号？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteDialogVisible = false">否</el-button>
@@ -76,8 +91,14 @@
     </el-dialog>
 
     <el-dialog title="添加称号" :visible.sync="createDialogVisible">
-      <el-form ref="createTitle" :model="createTitleTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="称号名称" prop="name">
+      <el-form
+        ref="createTitle"
+        :model="createTitleTemp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item label="称号ID" prop="titleID">
           <el-input v-model="createTitleTemp.name" />
         </el-form-item>
         <el-form-item label="类型" prop="name">
@@ -91,12 +112,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="createTitle">
-          确定
-        </el-button>
+        <el-button @click="createDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="createTitle">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -134,11 +151,7 @@ export default {
         pictureUrl: '',
         lifeTime: ''
       },
-      rules: {
-        name: [
-          { required: true, message: '称号名称不能为空', trigger: 'change' }
-        ]
-      }
+      rules: {}
     }
   },
   created() {
@@ -157,8 +170,7 @@ export default {
       })
     },
     resetTemp() {
-      this.createTitleTemp = {
-      }
+      this.createTitleTemp = {}
     },
     handleFilter() {
       this.titleQuery.page = 1
@@ -188,7 +200,7 @@ export default {
       })
     },
     createTitle() {
-      this.$refs['createTitle'].validate((valid) => {
+      this.$refs['createTitle'].validate(valid => {
         if (valid) {
           createTitle(this.createTitleTemp).then(response => {
             this.addDialogVisible = false
