@@ -20,7 +20,7 @@ export function createContest(data) {
   return request({
     url: '/admin/contest/create',
     method: 'post',
-    params: data
+    data
   })
 }
 

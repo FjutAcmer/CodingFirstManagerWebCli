@@ -2,14 +2,6 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="reviewQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="reviewQuery.contestKind" placeholder="比赛类型" filterable clearable class="filter-item" style="width: 130px">
-        <el-option
-          v-for="item in contestKindOptions"
-          :key="item.value"
-          :value="item.value"
-          :label="item.name"
-        />
-      </el-select>
       <el-select v-model="reviewQuery.reviewStatus" placeholder="审核状态" filterable clearable class="filter-item" style="width: 130px">
         <el-option
           v-for="item in reviewStatusOptions"
@@ -131,18 +123,13 @@ export default {
       listLoading: true,
       reviewQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         username: undefined,
         reviewStatus: undefined,
         contestKind: undefined
       },
-      reviewInfoTemp: '',
-      rules: {
-        reviewInfoTemp: [
-          { required: true, message: '标签名不能为空', trigger: 'change' }
-        ]
-      }
+      reviewInfoTemp: ''
     }
   },
   created() {
@@ -155,7 +142,7 @@ export default {
       fetchContestReviews(this.reviewQuery).then(response => {
         const res = response.data
         this.reviews = res.datas[0]
-        this.total = res.datas[0]
+        this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -168,11 +155,10 @@ export default {
     clearFilter() {
       this.reviewQuery = {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         username: undefined,
-        reviewStatus: undefined,
-        contestKind: undefined
+        reviewStatus: undefined
       }
       this.getReviews()
     },
@@ -216,25 +202,21 @@ export default {
         reviewInfo: this.reviewInfoTemp,
         reviewStatus: this.reviewStatus
       }
-      this.$refs['reviewInfo'].validate((valid) => {
-        if (valid) {
-          updateReview(data).then(response => {
-            const res = response.data
-            if (res.code === 10000) {
-              this.$notify({
-                title: '成功',
-                message: '审核成功',
-                type: 'success',
-                duration: 2000
-              })
-              for (let i = 0; i < this.reviewStatusOptions.length; i++) {
-                if (this.reviewStatusOptions[i].value === this.reviewStatus) {
-                  this.currentRow.reviewStatus = this.reviewStatusOptions[i].name
-                }
-              }
-              this.reviews.splice(this.currentIndex, 1, this.currentRow)
-            }
+      updateReview(data).then(response => {
+        const res = response.data
+        if (res.code === 10000) {
+          this.$notify({
+            title: '成功',
+            message: '审核成功',
+            type: 'success',
+            duration: 2000
           })
+          for (let i = 0; i < this.reviewStatusOptions.length; i++) {
+            if (this.reviewStatusOptions[i].value === data.reviewStatus) {
+              this.currentRow.reviewStatus = this.reviewStatusOptions[i].name
+            }
+          }
+          this.reviews.splice(this.currentIndex, 1, this.currentRow)
         }
       })
 

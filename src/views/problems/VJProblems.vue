@@ -42,7 +42,7 @@
       </el-table-column>
       <el-table-column label="标题" width="400" align="center">
         <template slot-scope="{row}">
-          <el-link type="primary" @click="goProblemDetail(row)">{{ row.title }}</el-link>
+          <el-link type="primary" :href="row.originUrl">{{ row.title }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" width="200" align="center">
@@ -50,21 +50,21 @@
           <span>{{ parseTime(row.triggerTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="来源" width="380" align="center">
+      <el-table-column label="来源" width="200" align="center">
         <template slot-scope="{row}">
           <span v-html="row.source" />
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
-        <template slot-scope="{row,$index}">
-          <el-button size="mini" type="danger" @click="currentRow = row, currentIndex = $index, dialogVisible = true">
+        <template slot-scope="{}">
+          <el-button size="mini" type="danger" @click="handleDelete">
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="vjProblemsQuery.page" :limit.sync="vjProblemsQuery.limit" @pagination="getVJProblems" />
+    <pagination v-show="total>0" :total="total" :page.sync="vjProblemsQuery.pageNum" :limit.sync="vjProblemsQuery.pageSize" @pagination="getVJProblems" />
 
     <el-dialog
       title="提示"
@@ -102,7 +102,7 @@ export default {
       listLoading: true,
       vjProblemsQuery: {
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 10,
         sort: undefined,
         title: undefined,
         OJId: undefined,
@@ -136,14 +136,20 @@ export default {
       fetchOjs().then(response => {
         const res = response.data
         this.Ojs = res.datas[0]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
     },
     handleFilter() {
       this.vjProblemsQuery.page = 1
       this.getVJProblems()
+    },
+    handleDelete() {
+      this.$notify({
+        title: '失败',
+        message: '暂不提供删除功能',
+        type: 'error',
+        duration: 2000
+      })
+      this.dialogVisible = false
     },
     clearFilter() {
       this.vjProblemsQuery = {

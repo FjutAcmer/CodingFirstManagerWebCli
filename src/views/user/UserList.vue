@@ -18,27 +18,46 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-card class="box-card">
+              <el-form-item label="手机号码">
+                <span>{{ props.row.phone }}</span>
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <span>{{ props.row.email }}</span>
+              </el-form-item>
+            </el-card>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="120" align="center">
+      <el-table-column label="用户名" width="140" align="center">
         <template slot-scope="{row}">
           <el-link type="primary" @click="getUserDetail(row)">{{ row.username }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" width="120" align="center">
+      <el-table-column label="昵称" width="150" align="center">
         <template slot-scope="{row}">
           <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Motto" width="380" align="center">
+      <el-table-column label="性别" width="80" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.gender }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Motto" width="400" align="center">
         <template slot-scope="{row}">
           <span>{{ row.motto }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ACB" width="80" align="center">
+      <el-table-column label="ACB" width="60" align="center">
         <template slot-scope="{row}">
           <span>{{ row.acb }}</span>
         </template>
@@ -46,16 +65,6 @@
       <el-table-column label="Rating" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.rating }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="手机号码" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Email" width="200" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.email }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
@@ -79,9 +88,6 @@
 
     <el-dialog title="奖励ACB" :visible.sync="rewardACBDialogVisible">
       <el-form ref="rewardACB" :model="rewardACBTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户ID" prop="id">
-          <span>{{ rewardACBTemp.id }}</span>
-        </el-form-item>
         <el-form-item label="用户名" prop="username">
           <span>{{ rewardACBTemp.username }}</span>
         </el-form-item>
@@ -111,13 +117,51 @@
       </span>
     </el-dialog>
 
+    <el-dialog
+      title="签到记录"
+      :visible.sync="checkInDialogVisible"
+      width="55%"
+    >
+      <el-table
+        v-loading="listLoading"
+        :data="checkInRecords"
+        fit
+        highlight-current-row
+      >
+        <el-table-column label="ID" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="签到时间" width="550" align="center">
+          <template slot-scope="{row}">
+            <el-link type="primary">{{ parseTime(row.checkTime) }}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" width="80" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.info }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="checkInTotal>0"
+        :total="checkInTotal"
+        :page.sync="checkInQuery.page"
+        :limit.sync="checkInQuery.limit"
+        @pagination="getCheckIn(currentRow)"
+      />
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { fetchUserList, updateACB, updatePsw } from '@/api/user'
+import { fetchUserList, updateACB, resetPsw, fetchUserCheckIn } from '@/api/user'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
+import store from '@/store'
+import { parseTime } from '@/utils'
 
 export default {
   name: 'UserList',
@@ -125,6 +169,14 @@ export default {
   directives: { waves },
   data() {
     return {
+      checkInRecords: null,
+      checkInDialogVisible: false,
+      checkInTotal: 0,
+      checkInQuery: {
+        page: 1,
+        limit: 10,
+        username: undefined
+      },
       rewardACBDialogVisible: false,
       resetPswDialogVisible: false,
       currentRow: '',
@@ -149,6 +201,7 @@ export default {
     this.getUsers()
   },
   methods: {
+    parseTime,
     getUsers() {
       this.listLoading = true
       fetchUserList(this.userQuery).then(response => {
@@ -199,25 +252,45 @@ export default {
       this.resetTemp()
       this.rewardACBDialogVisible = true
       this.currentRow = row
-      this.rewardACBTemp.id = row.id
       this.rewardACBTemp.username = row.username
       this.$nextTick(() => {
         this.$refs['rewardACB'].clearValidate()
       })
     },
     rewardACB() {
+      const data = {
+        toUsername: this.rewardACBTemp.username,
+        fromUsername: store.getters.name,
+        title: '赠送ACB通知',
+        text: '亲爱的用户' + this.rewardACBTemp.username + '，恭喜您获得' + this.rewardACBTemp.ACB + 'ACB',
+        ACB: this.rewardACBTemp.ACB
+      }
       this.listLoading = true
-      updateACB(this.temp).then(response => {
+      updateACB(data).then(response => {
         const res = response.data
         this.rewardACBDialogVisible = false
         if (res.code === 10000) {
-          this.$notify({
-            message: '赠送成功',
+          this.listLoading = false
+          this.currentRow.acb = this.currentRow.acb + data.ACB
+          this.users.splice(this.currentIndex, 1, this.currentRow)
+          this.$message({
+            message: '奖励成功',
             type: 'success'
           })
         }
-        this.getUsers()
       })
+    },
+    getCheckIn(row) {
+      this.currentRow = row
+      this.listLoading = true
+      this.checkInQuery.username = row.username
+      fetchUserCheckIn(this.checkInQuery).then(response => {
+        const res = response.data
+        this.checkInRecords = res.datas[0]
+        this.checkInTotal = res.datas[1]
+        this.listLoading = false
+      })
+      this.checkInDialogVisible = true
     },
     handleResetPsw(row) {
       this.resetPswDialogVisible = true
@@ -225,7 +298,7 @@ export default {
     },
     resetPsw() {
       this.listLoading = true
-      updatePsw(this.currentRow).then(response => {
+      resetPsw(this.currentRow.username).then(response => {
         const res = response.data
         this.resetPswDialogVisible = false
         if (res.code === 10000) {

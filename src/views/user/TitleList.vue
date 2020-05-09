@@ -38,7 +38,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="称号" width="400" align="center">
+      <el-table-column label="称号" width="200" align="center">
         <template slot-scope="{row}">
           <el-link type="primary">{{ row.name }}</el-link>
         </template>
@@ -55,7 +55,7 @@
       </el-table-column>
       <el-table-column label="拥有时长" width="250" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.lifeTime }}</span>
+          <span>{{ row.lifeTime === -1 ? '永久' : row.lifeTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
@@ -101,6 +101,15 @@
         <el-form-item label="称号ID" prop="titleID">
           <el-input v-model="createTitleTemp.name" />
         </el-form-item>
+        <el-form-item label="类型" prop="name">
+          <el-input v-model="createTitleTemp.type" />
+        </el-form-item>
+        <el-form-item label="图片" prop="name">
+          <el-image :src="createTitleTemp.pictureUrl" />
+        </el-form-item>
+        <el-form-item label="过期时间" prop="name">
+          <el-input v-model="createTitleTemp.lifeTime" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createDialogVisible = false">取消</el-button>
@@ -138,7 +147,7 @@ export default {
       createTitleTemp: {
         id: '',
         type: '',
-        titleID: '',
+        name: '',
         pictureUrl: '',
         lifeTime: ''
       },

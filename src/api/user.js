@@ -32,6 +32,14 @@ export function fetchUserList(query) {
   })
 }
 
+export function fetchUserCheckIn(query) {
+  return request({
+    url: '/admin/user/checkInRecords',
+    method: 'get',
+    params: query
+  })
+}
+
 export function fetchUser(id) {
   return request({
     url: '/admin/user/info',
@@ -52,15 +60,15 @@ export function updateACB(data) {
   return request({
     url: '/admin/user/updateACB',
     method: 'put',
-    data
+    params: data
   })
 }
 
-export function updatePsw(data) {
+export function resetPsw(username) {
   return request({
-    url: '/admin/user/updatePsw',
+    url: '/admin/user/resetPsw',
     method: 'put',
-    data
+    params: username
   })
 }
 

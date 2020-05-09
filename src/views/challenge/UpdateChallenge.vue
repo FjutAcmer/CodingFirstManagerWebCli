@@ -129,7 +129,7 @@
 
 <script>
 
-import { fetchAllChallenge, updateChallenge} from '@/api/challenge'
+import { fetchAllChallenge, updateChallenge } from '@/api/challenge'
 import { fetchAllProblems } from '@/api/problems'
 import Tinymce from '@/components/Tinymce'
 
@@ -183,7 +183,6 @@ export default {
     this.getProblemList()
     this.getChallengeList()
     this.challengeInfo = this.$route.query.row
-    console.log(this.$route.query.row)
   },
   methods: {
     getProblemList() {
@@ -247,7 +246,6 @@ export default {
           isExist = true
         }
       }
-      console.log(this.precondition)
       if (!isExist) {
         for (const item of this.challengeList) { // 不存在相同模块则在模块列表中搜索模块
           if (item.id === preId) {
@@ -274,13 +272,12 @@ export default {
     updateChallenge() {
       this.$refs.challengeInfo.validate(valid => {
         if (valid) {
-          this.listLoading = true
           updateChallenge(this.challengeInfo).then(response => {
             const res = response.data
             if (res.code === 10000) {
               this.$message({
                 title: '成功',
-                message: '修改成',
+                message: '修改成功',
                 type: 'success',
                 duration: 2000
               })
@@ -308,7 +305,7 @@ export default {
 
 <style scoped>
   .box-card {
-    width: 1400px;
+    width: 1250px;
     margin-top: 30px;
     margin-left: 30px;
   }

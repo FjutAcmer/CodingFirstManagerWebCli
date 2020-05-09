@@ -104,7 +104,7 @@ export default {
         ],
         password: [
           { required: true, message: '密码不能为空', trigger: 'change' },
-          { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'change' },
+          { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'change' },
           { validator: validatePassword, trigger: 'change' }
         ]
       },

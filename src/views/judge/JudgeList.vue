@@ -63,12 +63,12 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="120">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="200" align="center">
+      <el-table-column label="用户名" width="180" align="center">
         <template slot-scope="{row}">
           <el-link type="primary">{{ row.username }}</el-link>
         </template>
@@ -78,10 +78,10 @@
           <el-link type="primary">{{ row.problemId }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="评测结果" width="250" align="center">
+      <el-table-column label="评测结果" width="200" align="center">
         <template slot-scope="{row}">
-          <el-button size="mini" plain>
-            <el-link>{{ row.result }}</el-link>
+          <el-button :type="resultType(row.result)" size="mini" plain>
+            <span>{{ row.result }}</span>
           </el-button>
         </template>
       </el-table-column>
@@ -95,12 +95,12 @@
           <span>{{ row.timeUsed }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="使用内存" w idth="120" align="center">
+      <el-table-column label="使用内存" w idth="100" align="center">
         <template slot-scope="{row}">
           <span>{{ row.memoryUsed }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="代码长" width="120" align="center">
+      <el-table-column label="代码长" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.codeLength }}</span>
         </template>
@@ -226,10 +226,8 @@ export default {
       fetchJudgeInfo(row.id).then(response => {
         const res = response.data
         this.judgeInfo = res.datas[0]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
       })
+      this.codeDialogVisible = true
     },
     handleFilter() {
       this.judgesQuery.page = 1
@@ -269,7 +267,7 @@ export default {
       ) {
         type = 'danger'
       }
-      return type
+      return 'warning'
     },
     goJudgeDetail(row) {
       this.$router.push({

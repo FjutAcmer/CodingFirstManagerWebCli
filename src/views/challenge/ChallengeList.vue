@@ -26,7 +26,7 @@
           <el-form label-position="left" inline class="demo-table-expand">
             <el-card class="box-card">
               <el-form-item label="描述">
-                <span v-html="props.row.description"></span>
+                <span v-html="props.row.description" />
               </el-form-item>
             </el-card>
           </el-form>
@@ -37,7 +37,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="模块名称" width="550" align="center">
+      <el-table-column label="模块名称" width="380" align="center">
         <template slot-scope="{row}">
           <el-link type="primary">{{ row.name }}</el-link>
         </template>
@@ -54,7 +54,7 @@
       </el-table-column>
       <el-table-column label="所需积分" width="120" align="center">
         <template slot-scope="{row}">
-          <span >{{ row.preconditionTotalScore ? row.preconditionTotalScore : 0 }}</span>
+          <span>{{ row.preconditionTotalScore ? row.preconditionTotalScore : 0 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="170" class-name="small-padding">
@@ -108,7 +108,7 @@
             <span>{{ row.problemId }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="标题" width="600" align="center">
+        <el-table-column label="标题" width="550" align="center">
           <template slot-scope="{row}">
             <el-link type="primary">{{ row.title }}</el-link>
           </template>
@@ -151,7 +151,7 @@ export default {
       listLoading: true,
       challengeQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         name: undefined
       },
@@ -187,7 +187,7 @@ export default {
     clearFilter() {
       this.challengeQuery = {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         name: undefined
       }
