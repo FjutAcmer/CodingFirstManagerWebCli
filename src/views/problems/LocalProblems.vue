@@ -84,8 +84,9 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="250" class-name="small-padding">
         <template slot-scope="{row,$index}">
-          <el-button size="mini" type="primary" @click="handleUpdate(row)">修改</el-button>
           <el-button size="mini" type="warning">查看测试集</el-button>
+          <el-button size="mini" type="primary" @click="handleUpdate(row)">修改</el-button>
+
           <el-button
             size="mini"
             type="danger"
@@ -94,8 +95,7 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <pagination
+    <Pagination
       v-show="total>0"
       :total="total"
       :page.sync="problemsQuery.page"

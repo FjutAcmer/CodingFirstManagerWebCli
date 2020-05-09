@@ -5,10 +5,12 @@
         <h1>{{ problemInfo.title }}</h1>
         <p>TimeLimit:{{ problemView.timeLimit }}</p>
         <p>MemoryLimit:{{ problemView.memoryLimit }}</p>
-        <p>64-bit integer IO format:
+        <p>
+          64-bit integer IO format:
           <el-button type="info" size="mini">{{ problemView.intFormat }}</el-button>
         </p>
       </div>
+
       <el-form ref="problemDetail" class="problem-content" label-width="80px">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
@@ -119,13 +121,15 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        next()
-      }).catch(() => {
-      // 如果取消跳转地址栏回退到之前位置
-        this.$store.dispatch('tagsView/delView', this.$route)
-        this.$router.go(-1)
       })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          // 如果取消跳转地址栏回退到之前位置
+          this.$store.dispatch('tagsView/delView', this.$route)
+          this.$router.go(-1)
+        })
     }
   }
 }

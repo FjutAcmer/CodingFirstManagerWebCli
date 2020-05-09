@@ -1,7 +1,7 @@
 <template>
   <div class="card-container">
-    <img class="oj-icon-img" :src="data.logoUrl" alt="没有LOGO">
-    <span class="name-span">{{ data.name }}</span>
+    <el-avatar :size="50" :src="data.targetWebsiteLogoUrl" fit="cover" />
+    <span class="name-span">{{ data.spiderName }}</span>
   </div>
 </template>
 
@@ -26,7 +26,7 @@ export default {
   &:hover {
     cursor: pointer;
     .name-span {
-      color: blue;
+      color: lightblue;
       font-weight: bold;
     }
   }

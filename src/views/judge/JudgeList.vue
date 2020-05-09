@@ -1,9 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="judgesQuery.username" placeholder="用户" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="judgesQuery.problemId" placeholder="题目ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="judgesQuery.result" placeholder="结果" filterable clearable class="filter-item" style="width: 130px">
+      <el-input
+        v-model="judgesQuery.username"
+        placeholder="用户"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="judgesQuery.problemId"
+        placeholder="题目ID"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-select
+        v-model="judgesQuery.result"
+        placeholder="结果"
+        filterable
+        clearable
+        class="filter-item"
+        style="width: 130px"
+      >
         <el-option
           v-for="item in resultOption"
           :key="item.value"
@@ -11,7 +30,14 @@
           :label="item.name"
         />
       </el-select>
-      <el-select v-model="judgesQuery.language" placeholder="语言" filterable clearable class="filter-item" style="width: 130px">
+      <el-select
+        v-model="judgesQuery.language"
+        placeholder="语言"
+        filterable
+        clearable
+        class="filter-item"
+        style="width: 130px"
+      >
         <el-option
           v-for="item in languageOption"
           :key="item.value"
@@ -19,12 +45,14 @@
           :label="item.name"
         />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">
-        查看所有
-      </el-button>
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >搜索</el-button>
+      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">查看所有</el-button>
     </div>
 
     <el-table
@@ -86,7 +114,8 @@
         <template slot-scope="{row,$index}">
           <el-dropdown>
             <el-button type="primary" size="mini">
-              操作菜单<i class="el-icon-arrow-down el-icon--right" />
+              操作菜单
+              <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="getDetail(row)">查看代码</el-dropdown-item>
@@ -97,20 +126,21 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="judgesQuery.page" :limit.sync="judgesQuery.limit" @pagination="getJudges" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="judgesQuery.page"
+      :limit.sync="judgesQuery.limit"
+      @pagination="getJudges"
+    />
 
-    <el-dialog
-      title="查看代码"
-      :visible.sync="codeDialogVisible"
-      width="50%"
-    >
+    <el-dialog title="查看代码" :visible.sync="codeDialogVisible" width="50%">
       <el-card class="box-card">
         <div class="code-content">
           <pre>{{ judgeInfo.code }}</pre>
         </div>
       </el-card>
     </el-dialog>
-
   </div>
 </template>
 
@@ -171,8 +201,7 @@ export default {
         result: undefined,
         language: undefined
       },
-      rules: {
-      }
+      rules: {}
     }
   },
   created() {
@@ -192,6 +221,8 @@ export default {
       })
     },
     getDetail(row) {
+      this.codeDialogVisible = true
+      this.listLoading = true
       fetchJudgeInfo(row.id).then(response => {
         const res = response.data
         this.judgeInfo = res.datas[0]
@@ -221,30 +252,28 @@ export default {
         this.handleFilter()
       }
     },
-    resultType(result) {
-      if (result === 'Accepted' || result === 'Score') {
-        return 'success'
+    resultType(row) {
+      let type = ''
+      if (row.resultType('Accepted')) {
+        type = 'success'
       } else if (
-        result === 'Complication Error' ||
-        result === 'Presentation Error' ||
-        result === 'Runtime Error' ||
-        result === 'Wrong Answer' ||
-        result === 'Time Limit Exceeded' ||
-        result === 'Memory Limit Exceeded' ||
-        result === 'Output Limit Exceeded') {
-        return 'danger'
-      } else if (
-        result === 'Pending...' ||
-        result === 'Judging...' ||
-        result === 'Running...') {
-        return 'info'
-      } else if (result.substring(0, 5) === 'Score') {
-        return 'primary'
+        row.result === 'Complication Error' ||
+        row.result === 'Presentation Error' ||
+        row.result === 'Runtime Error' ||
+        row.result === 'Wrong Answer' ||
+        row.result === 'Time Limit Exceeded' ||
+        row.result === 'Memory Limit Exceeded' ||
+        row.result === 'Output Limit Exceeded'
+      ) {
+        type = 'danger'
       }
       return 'warning'
     },
     goJudgeDetail(row) {
-      this.$router.push({ path: '/judge/judgeDetail', query: { id: row.judgeID }})
+      this.$router.push({
+        path: '/judge/judgeDetail',
+        query: { id: row.judgeID }
+      })
     }
   }
 }
