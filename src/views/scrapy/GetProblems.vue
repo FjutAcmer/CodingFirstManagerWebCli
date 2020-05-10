@@ -7,7 +7,7 @@
       <el-col :span="12">
         <el-card>
           <div slot="header">
-            全站爬取
+            <i class="el-icon-shopping-cart-full" /> 全站爬取
             <span style="color: red">（双击图标选取）</span>
           </div>
           <div>
@@ -22,7 +22,7 @@
       <el-col :span="12">
         <el-card>
           <div slot="header">
-            范围爬取
+            <i class="el-icon-shopping-cart-2" /> 范围爬取
             <span style="color: red">（双击图标选取）</span>
           </div>
           <div>
@@ -37,22 +37,40 @@
     </el-row>
     <el-card>
       <div>
-        <el-row :gutter="5">
+        <el-row :gutter="10">
+          <el-col :span="6">
+            目前选中爬虫：
+            <el-avatar :size="24" :src="selectedItem.targetWebsiteLogoUrl" fit="cover" />
+            {{ selectedItem.targetWebsiteName }}
+          </el-col>
+          <el-col :span="18">
+            目前选中模式：
+            <el-tag
+              effect="dark"
+              :type="selectedItem.spiderType===1?'danger':'success'"
+            >{{ selectedItem.range }}</el-tag>
+          </el-col>
+          <el-col :span="24">
+            目前执行方式：
+            <el-tag effect="dark" type="success">立即爬取</el-tag>
+          </el-col>
           <el-col :span="6">
             爬取站点:
-            <el-input v-model="selectedItem.targetWebsiteName" style="width: 200px" disabled />
+            <el-input v-model="selectedItem.targetWebsiteName" disabled />
           </el-col>
           <el-col :span="6">
             站点网址:
-            <el-input v-model="selectedItem.targetWebsiteUrl" style="width: 200px" disabled />
+            <el-input v-model="selectedItem.targetWebsiteUrl" disabled>
+              <el-button slot="append" @click="checkNetStatus()">跳转查看</el-button>
+            </el-input>
           </el-col>
           <el-col :span="6">
             执行爬虫:
-            <el-input v-model="selectedItem.spiderName" style="width: 200px" disabled />
+            <el-input v-model="selectedItem.spiderName" disabled />
           </el-col>
           <el-col :span="6">
-            可执行范围:
-            <el-input v-model="selectedItem.range" style="width: 200px" disabled />
+            反反爬策略:
+            <el-input v-model="selectedItem.antiMeasures" disabled />
           </el-col>
           <el-col :span="24">
             爬取范围：
@@ -65,21 +83,28 @@
               style="color: red"
             >接收参数：单题直接输入题号，范围使用“[起始题号-结束题号]”（范围格式仅支持数字题号），用“,”隔开。例：1000,1001,[1002-1009],1010</span>
           </el-col>
-          <div v-show="showBtn">
-            <el-button type="info" @click="checkNetStatus()">跳转目标站点</el-button>
-            <el-button type="warning" @click="checkRange()">检查爬取范围</el-button>
-            <el-button type="primary" @click="startSpider()">开始爬取</el-button>
-          </div>
+          <!-- <el-col>定时任务：</el-col> -->
         </el-row>
-
-        <el-input
-          v-show="rangeCheckShow"
-          v-model="rangeCheckText"
-          resize="none"
-          autosize
-          disabled
-          type="textarea"
-        />
+        <el-divider />
+        <div class="title-font">设置为定时任务：</div>
+        <el-row :gutter="10">
+          <el-col :span="24">
+            选择执行时间：
+            <el-date-picker
+              v-model="timeBetween"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始时间"
+              end-placeholder="结束"
+            />
+            <span style="color: blue">设置本项，即可在开始时间触发该任务，并在结束时间强制关闭该任务。为空则立即执行</span>
+          </el-col>
+        </el-row>
+        <el-divider />
+        <div v-show="showBtn">
+          <el-button type="warning" @click="checkRange()">检查爬取范围</el-button>
+          <el-button v-loading="loading" type="primary" @click="startSpider()">执行爬取</el-button>
+        </div>
       </div>
     </el-card>
     <el-card>
@@ -120,7 +145,7 @@
 <script>
 import OJSiteCard from './components/OJSiteCard'
 import store from '@/store'
-import { getItems, startSpider } from '@/api/spider'
+import { getItems, startSpider, rangeCheck } from '@/api/spider'
 export default {
   name: 'GetProblems',
   components: {
@@ -128,12 +153,13 @@ export default {
   },
   data() {
     return {
+      loading: false,
       fullOjs: [],
       specOjs: [],
       selectedItem: '',
       selectRange: '',
+      timeBetween: '',
       showBtn: false,
-      rangeCheckShow: false,
       rangeCheckText: '',
       jobInfo: '',
       jobInfo2: ''
@@ -172,15 +198,27 @@ export default {
       window.open('http://' + this.selectedItem.targetWebsiteUrl)
     },
     checkRange() {
-      //  TODO: 让后端检查爬取范围有效性
-      this.rangeCheckShow = true
-      this.rangeCheckText = 'TODO: 还没做完！！！'
+      if (this.selectRange === '') {
+        this.$message.error('未指定范围！')
+        return
+      }
+      rangeCheck(this.selectRange).then(response => {
+        const res = response.data
+        if (res.code === 10000) {
+          this.rangeCheckText = '范围正常！解析为：' + res.datas[0]
+          this.$message.success(this.rangeCheckText)
+        } else {
+          this.rangeCheckText = '范围解析失败！请检查范围是否符合要求！'
+          this.$message.error(this.rangeCheckText)
+        }
+      })
     },
     startSpider() {
       if (this.selectRange === '') {
         this.$message.error('未指定范围！')
         return
       }
+      this.loading = true
       startSpider({
         spiderName: this.selectedItem.spiderName,
         range: this.selectRange,
@@ -189,6 +227,7 @@ export default {
         const res = response.data
         this.jobInfo = res.datas[0]
         this.jobInfo2 = res.datas[1]
+        this.loading = false
       })
     },
     showRealTimeLog() {
@@ -213,6 +252,7 @@ export default {
   >>> .el-card__header {
     background-color: #eef1f6;
   }
+
   .el-card {
     margin-bottom: 14px;
     >>> .el-row {
@@ -220,6 +260,11 @@ export default {
       .el-col {
         margin-bottom: 10px;
       }
+    }
+    .title-font {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
   }
 }

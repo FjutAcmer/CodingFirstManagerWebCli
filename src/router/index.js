@@ -156,7 +156,7 @@ export const asyncRoutes = [
   },
 
   /** 路由表过长可以把它们分割成小模块 **/
-  // add by axiang [2020/4/17] 题目爬取模块
+  // add by axiang [2020/4/17] 题目爬取相关，目前屏蔽
   {
     path: '/scrapy',
     component: Layout,
@@ -166,6 +166,7 @@ export const asyncRoutes = [
       title: '题目爬取',
       icon: 'international'
     },
+    hidden: true,
     children: [
       {
         path: 'GetProblems',
@@ -208,7 +209,7 @@ export const asyncRoutes = [
         path: 'TempProblems',
         component: () => import('@/views/problems/TempProblems'),
         name: 'TempProblems',
-        meta: { title: '爬取题库', noCache: true }
+        meta: { title: '爬取暂存题库', noCache: true }
       },
 
       {
@@ -248,7 +249,7 @@ export const asyncRoutes = [
         path: 'VJProblemDetail',
         component: () => import('@/views/problems/VJProblemDetail'),
         name: 'VJProblemDetail',
-        meta: { title: '题目详情', noCache: true },
+        meta: { title: 'VJ题目详情', noCache: true },
         hidden: true
       }
     ]
@@ -466,22 +467,10 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'ScrapyServer',
-        component: () => import('@/views/scrapy-manager/ScrapyServer'),
-        name: 'ScrapyServer',
+        path: 'SpiderServer',
+        component: () => import('@/views/scrapy-manager/SpiderServer'),
+        name: 'SpiderServer',
         meta: { title: '爬虫服务器', noCache: true }
-      },
-      {
-        path: 'QueryScrapy',
-        component: () => import('@/views/scrapy-manager/QueryScrapy'),
-        name: 'QueryScrapy',
-        meta: { title: '爬虫状态', noCache: true }
-      },
-      {
-        path: 'SpiderMission',
-        component: () => import('@/views/scrapy-manager/SpiderMission'),
-        name: 'SpiderMission',
-        meta: { title: '爬虫任务', noCache: true }
       },
       {
         path: 'SpiderLog',

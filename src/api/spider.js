@@ -23,6 +23,14 @@ export function startSpider(data) {
   })
 }
 
+export function rangeCheck(data) {
+  return request({
+    url: '/admin/spider/range/check',
+    method: 'post',
+    data: data
+  })
+}
+
 export function getSpiderLogRealtime(data) {
   return request({
     url: '/admin/spider/log/realtime',

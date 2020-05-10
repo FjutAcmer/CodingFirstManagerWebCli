@@ -177,6 +177,7 @@ import { getInfo, simTwoProblem } from '@/api/spider-problem'
 import { fetchProblem } from '@/api/problems'
 export default {
   name: 'SimProblem',
+
   data() {
     return {
       getProblemId: '',
@@ -184,6 +185,12 @@ export default {
       localProblemId: '',
       localProblemInfo: '',
       simInfo: ''
+    }
+  },
+  mounted() {
+    if (this.$route.query.id) {
+      this.getProblemId = this.$route.query.id
+      this.querySpiderGetProblem()
     }
   },
   methods: {
