@@ -128,7 +128,7 @@ export default {
         this.total = res.datas[0].recordsTotal
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     getOjs() {
@@ -171,6 +171,13 @@ export default {
       }
     },
     handleUpdate() {
+      this.getVJProblems()
+      this.$notify({
+        title: '成功',
+        message: '更新成功',
+        type: 'success',
+        duration: 2000
+      })
     },
     goProblemDetail(row) {
       this.$router.push({ path: '/problems/VJProblemDetail', query: { probNum: row.originProb, OJId: row.originOJ }})

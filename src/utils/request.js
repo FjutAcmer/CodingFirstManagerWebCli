@@ -92,7 +92,7 @@ service.interceptors.response.use(
       Notification.error({
         title: '业务执行失败',
         duration: 5000,
-        position: 'top-left',
+        position: 'top-center',
         offset: 40,
         showClose: false,
         message: res.data.msg

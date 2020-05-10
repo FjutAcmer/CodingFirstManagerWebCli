@@ -20,6 +20,15 @@ export function validUsername(str) {
 }
 
 /**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validTime(str) {
+  const valid_map = str
+  return valid_map.indexOf(str.trim()) >= 0
+}
+
+/**
  * @param {string} url
  * @returns {Boolean}
  */

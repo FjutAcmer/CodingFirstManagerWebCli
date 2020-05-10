@@ -134,7 +134,7 @@ export default {
 </script>
 <style scoped>
   .problem-detail .box-card, .problem-basic .info {
-    width: 1100px;
+    width: 900px;
   }
   .problem-detail .box-card {
     margin-top: 10px;

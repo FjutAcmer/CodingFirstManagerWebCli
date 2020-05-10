@@ -101,7 +101,7 @@ export default {
         cost: '',
         stock: '',
         goodsType: false,
-        buyLimit: false,
+        buyLimit: 100,
         buyVerifyLimit: 1,
         visible: true,
         pictureUrl: '',
@@ -158,7 +158,7 @@ export default {
       })
     },
     handlePictureCardPreview(res, file) {
-      this.goodsInfo.pictureUrl = URL.createObjectURL(file.raw)
+      this.goodsInfo.pictureUrl = file.url
     },
     beforePictureUpload(file) {
       const isJPG = file.type === 'image/jpeg'

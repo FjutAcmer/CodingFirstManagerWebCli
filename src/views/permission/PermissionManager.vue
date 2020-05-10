@@ -98,7 +98,7 @@
     <el-dialog title="新增管理员" :rule="addAdminRules" :visible.sync="grantAdminDialogVisible">
       <el-form ref="addAdmin" :model="addAdminTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="addAdminTemp.username" />
+          <el-input v-model="addAdminTemp.username" @keyup.enter.native="addAdmin" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -173,7 +173,9 @@ export default {
         const res = response.data
         this.admins = res.datas[0]
         this.total = res.datas[1]
-        this.listLoading = false
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
       })
     },
     getPermissionTypes() {
@@ -276,8 +278,8 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              this.grantAdminDialogVisible = false
             }
+            this.grantAdminDialogVisible = false
             this.getAdmins()
           })
         } else {
