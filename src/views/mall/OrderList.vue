@@ -247,15 +247,6 @@ export default {
         orderCancel: orderCancel
       }
       updateOrder(data).then(response => {
-        const res = response.data
-        if (res.code === 10000) {
-          this.$notify({
-            title: '成功',
-            message: '操作成功',
-            type: 'success',
-            duration: 2000
-          })
-        }
         row.orderCancel = orderCancel
         this.orders.splice(index, 1, row)
       })

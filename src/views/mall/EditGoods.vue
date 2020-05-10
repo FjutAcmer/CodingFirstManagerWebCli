@@ -113,11 +113,12 @@ export default {
         this.goodsInfo = res.datas[0]
         this.goodsInfo.visible = res.datas[0].visible === 1
         this.goodsInfo.goodsType = res.datas[0].goodsType === 1
-        if (this.goods.buyLimit === -1) {
-          this.buyVerifyLimit.name = '不限购'
-          this.buyVerifyLimit.value = true
+        if (this.goodsInfo.buyLimit === -1) {
+          this.buyLimitStatus.name = '不限购'
+          this.buyLimitStatus.value = true
         } else {
-          this.buyVerifyLimit.name = false
+          this.buyLimitStatus.name = '限购'
+          this.buyLimitStatus.value = false
         }
         setTimeout(() => {
           this.listLoading = false

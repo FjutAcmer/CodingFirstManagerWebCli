@@ -210,7 +210,7 @@ export default {
         this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {
@@ -272,7 +272,6 @@ export default {
         if (res.code === 10000) {
           this.listLoading = false
           this.currentRow.acb = this.currentRow.acb + data.ACB
-          this.users.splice(this.currentIndex, 1, this.currentRow)
           this.$message({
             message: '奖励成功',
             type: 'success'

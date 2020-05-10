@@ -10,11 +10,11 @@
           <el-button type="info" size="mini">{{ problemView.intFormat }}</el-button>
         </p>
       </div>
-      <el-form ref="problemDetail" label-width="80px">
+
+      <el-form ref="problemDetail" class="problem-content" label-width="80px">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>问题描述</span>
-            <el-button style="float: right; padding: 3px 0" type="text">编辑</el-button>
           </div>
           <div class="text item">
             <Tinymce ref="editor" v-model="problemView.description" :height="400" />
@@ -23,7 +23,6 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>输入</span>
-            <el-button style="float: right; padding: 3px 0" type="text">编辑</el-button>
           </div>
           <div class="text item">
             <Tinymce ref="editor" v-model="problemView.input" :height="400" />
@@ -32,7 +31,6 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>输出</span>
-            <el-button style="float: right; padding: 3px 0" type="text">编辑</el-button>
           </div>
           <div class="text item">
             <Tinymce ref="editor" v-model="problemView.output" :height="400" />
@@ -41,7 +39,6 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>输入样例</span>
-            <el-button style="float: right; padding: 3px 0" type="text">编辑</el-button>
           </div>
           <div class="text item">
             <Tinymce ref="editor" v-model="problemSample.inputCase" :height="400" />
@@ -56,7 +53,7 @@
             <Tinymce ref="editor" v-model="problemSample.outputCase" :height="400" />
           </div>
         </el-card>
-        <el-form-item>
+        <el-form-item class="form-button">
           <el-button type="primary" @click="handleUpdate(problemView, problemSample)">提交</el-button>
           <el-button @click="beforeRouteLeave">取消</el-button>
         </el-form-item>
@@ -138,8 +135,15 @@ export default {
 }
 </script>
 <style scoped>
-.box-card {
-  margin: 0 auto;
-  width: 1300px;
-}
+  .problem-content {
+    margin:0 auto;
+    width: 1100px;
+  }
+  .box-card {
+    margin:10px;
+  }
+  .form-button {
+    float: right;
+    margin-top: 10px;
+  }
 </style>

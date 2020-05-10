@@ -26,9 +26,17 @@
             </template>
           </el-table-column>
           <el-table-column width="1020">
-            <template slot-scope="{row}">
+            <template slot-scope="{row, $index}">
               <pre>{{ row.text }}</pre>
-              <el-button style="float: right;" type="primary" size="mini">删除</el-button>
+              <el-button
+                v-if="row.replyOrder !== 1"
+                style="float: right;"
+                type="primary"
+                size="mini"
+                @click="deleteDialogVisible = true, currentRow = row, currentIndex = $index"
+              >
+                删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -51,10 +59,22 @@
       </div>
     </el-card>
 
+    <el-dialog
+      title="提示"
+      :visible.sync="deleteDialogVisible"
+      width="30%"
+    >
+      <span>确定删除该回复？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialogVisible = false">否</el-button>
+        <el-button type="primary" @click="handleDelete">是</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 <script>
-import { fetchDiscussReply } from '@/api/discuss'
+import { deleteReply, fetchDiscussReply } from '@/api/discuss'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 import { parseTime } from '@/utils'
@@ -69,6 +89,8 @@ export default {
         id: this.$route.query.id,
         title: this.$route.query.title
       },
+      deleteDialogVisible: false,
+      listLoading: false,
       discussReply: null,
       replyContent: '',
       total: 0,
@@ -77,8 +99,7 @@ export default {
         limit: 10,
         id: undefined
       },
-      replyDialogVisible: false,
-      deleteDialogVisible: false
+      replyDialogVisible: false
     }
   },
   created() {
@@ -93,6 +114,26 @@ export default {
         const res = response.data
         this.discussReply = res.datas[0]
         this.total = res.datas[1]
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
+      })
+    },
+    handleDelete() {
+      this.deleteDialogVisible = false
+      const row = this.currentRow
+      const index = this.currentIndex
+      deleteReply(row.id).then(response => {
+        const res = response.data
+        if (res.code === 10000) {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.discussReply.splice(index, 1)
+        }
       })
     },
     getValue(row) {
