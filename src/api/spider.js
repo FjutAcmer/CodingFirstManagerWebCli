@@ -7,6 +7,14 @@ export function getStatus() {
   })
 }
 
+export function getSites(data) {
+  return request({
+    url: '/admin/spider/sites',
+    method: 'post',
+    params: data
+  })
+}
+
 export function getItems(data) {
   return request({
     url: '/admin/spider/items',
