@@ -470,7 +470,7 @@ export const asyncRoutes = [
         path: 'SpiderServer',
         component: () => import('@/views/scrapy-manager/SpiderServer'),
         name: 'SpiderServer',
-        meta: { title: '爬虫服务器', noCache: true }
+        meta: { title: '爬虫服务器', noCache: false }
       },
       {
         path: 'SpiderLog',
