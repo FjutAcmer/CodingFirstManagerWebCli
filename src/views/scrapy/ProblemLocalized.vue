@@ -172,7 +172,10 @@ export default {
     },
     toSim() {
       this.$router.push({
-        name: 'SimProblem'
+        name: 'SimProblem',
+        query: {
+          id: this.id
+        }
       })
     },
     getProblemInfo() {
@@ -181,6 +184,7 @@ export default {
       }).then(response => {
         const res = response.data
         this.problemInfo = res.datas[0]
+
         this.newProblemInfo.problemId = this.id
         this.newProblemInfo.problemTitle = this.problemInfo.problemTitle
         this.newProblemInfo.problemTimeLimit = this.problemInfo.problemTimeLimit

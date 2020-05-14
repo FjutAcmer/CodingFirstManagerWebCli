@@ -3,38 +3,20 @@
     <div class="aside warning-title">
       <span>请注意，如非必要，请尽量在网络空闲时期爬取题目。如需设置自动爬取策略，请到爬虫管理模块设置</span>
     </div>
-    <el-row :gutter="10">
-      <el-col :span="12">
-        <el-card>
-          <div slot="header">
-            <i class="el-icon-shopping-cart-full" /> 全站爬取
-            <span style="color: red">（双击图标选取）</span>
-          </div>
-          <div>
-            <el-row :gutter="5">
-              <el-col v-for="item in fullOjs" :key="item.id" :span="4">
-                <OJSiteCard :data="item" @dblclick.native="selectSpiderItem(item)" />
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card>
-          <div slot="header">
-            <i class="el-icon-shopping-cart-2" /> 范围爬取
-            <span style="color: red">（双击图标选取）</span>
-          </div>
-          <div>
-            <el-row :gutter="5">
-              <el-col v-for="item in specOjs" :key="item.id" :span="4">
-                <OJSiteCard :data="item" @dblclick.native="selectSpiderItem(item)" />
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <el-card>
+      <div slot="header">站点名</div>
+      <div>
+        <el-row :gutter="5">
+          <el-col v-for="item in websites" :key="item.id" :span="2">
+            <el-popover placement="top">
+              <el-button type="warning" @click="selectSpiderItem(item[0])">全站爬取</el-button>
+              <el-button v-show="item[1]" type="success" @click="selectSpiderItem(item[1])">范围爬取</el-button>
+              <OJSiteCard slot="reference" :data="item[0]" />
+            </el-popover>
+          </el-col>
+        </el-row>
+      </div>
+    </el-card>
     <el-card>
       <div>
         <el-row :gutter="10">
@@ -47,7 +29,7 @@
             目前选中模式：
             <el-tag
               effect="dark"
-              :type="selectedItem.spiderType===1?'danger':'success'"
+              :type="selectedItem.spiderType===1?'warning':'success'"
             >{{ selectedItem.range }}</el-tag>
           </el-col>
           <el-col :span="24">
@@ -145,7 +127,7 @@
 <script>
 import OJSiteCard from './components/OJSiteCard'
 import store from '@/store'
-import { getItems, startSpider, rangeCheck } from '@/api/spider'
+import { getSites, startSpider, rangeCheck } from '@/api/spider'
 export default {
   name: 'GetProblems',
   components: {
@@ -153,9 +135,9 @@ export default {
   },
   data() {
     return {
+      popVisiable: false,
       loading: false,
-      fullOjs: [],
-      specOjs: [],
+      websites: [],
       selectedItem: '',
       selectRange: '',
       timeBetween: '',
@@ -163,8 +145,6 @@ export default {
       rangeCheckText: '',
       jobInfo: '',
       jobInfo2: ''
-      // showLog: false,
-      // jobLog: ''
     }
   },
   mounted() {
@@ -172,20 +152,13 @@ export default {
   },
   methods: {
     getSpiderItems() {
-      this.fullOjs = []
-      this.specOjs = []
-      getItems({
+      getSites({
         pageNum: '1',
         pageSize: '100'
       }).then(response => {
         const res = response.data
-        for (const i of res.datas[0]) {
-          if (i.spiderType === 1) {
-            this.fullOjs.push(i)
-          } else if (i.spiderType === 2) {
-            this.specOjs.push(i)
-          }
-        }
+        this.websites = res.datas[0]
+        console.log(this.websites)
       })
     },
     selectSpiderItem(item) {
