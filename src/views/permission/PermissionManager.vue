@@ -141,7 +141,7 @@ export default {
       listLoading: true,
       adminQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         username: undefined
       },
@@ -205,7 +205,7 @@ export default {
         sort: undefined,
         username: undefined
       }
-      this.getUsers()
+      this.getAdmins()
     },
     sortChange(data) {
       const { prop, order } = data

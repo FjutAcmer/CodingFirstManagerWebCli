@@ -6,7 +6,8 @@ const state = {
   token: getToken(),
   name: localStorage.getItem('username'),
   avatar: '',
-  roles: []
+  roles: [],
+  info: ''
 }
 
 const mutations = {
@@ -18,6 +19,9 @@ const mutations = {
   },
   setAvatar: (state, avatar) => {
     state.avatar = avatar
+  },
+  setInfo: (state, info) => {
+    state.info = info
   },
   setRoles: (state, roles) => {
     state.roles = roles
@@ -37,7 +41,6 @@ const actions = {
         commit('setToken', token)
         commit('setAvatar', avatar)
         setToken(token)
-        localStorage.setItem('username', name)
         resolve()
       }).catch(error => {
         reject(error)
@@ -53,10 +56,13 @@ const actions = {
           reject('认证失败, 请重新登录')
         }
         const roles = 'superAdmin'
-        // const userBaseInfo = datas[0]
+        const userBaseInfo = datas[0]
         const userCommonInfo = datas[1]
         commit('setRoles', roles)
         commit('setAvatar', userCommonInfo.avatarUrl)
+        commit('setInfo', userBaseInfo)
+        // commit('email', userBaseInfo.email)
+        // commit('registerTime', userBaseInfo.registerTime)
         resolve(roles)
       }).catch(error => {
         reject(error)
@@ -71,9 +77,6 @@ const actions = {
         commit('setRoles', [])
         removeToken()
         resetRouter()
-
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
 
         resolve()

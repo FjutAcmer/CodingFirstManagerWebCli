@@ -6,6 +6,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
+import { getLanguageCount } from '@/api/judge'
 
 export default {
   mixins: [resize],
@@ -25,13 +26,19 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      tempData: null,
+      languageData: [
+        { name: '', value: '' },
+        { name: '', value: '' },
+        { name: '', value: '' },
+        { name: '', value: '' },
+        { name: '', value: '' }
+      ]
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+    this.getLanguageData()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -41,6 +48,20 @@ export default {
     this.chart = null
   },
   methods: {
+    getLanguageData() {
+      getLanguageCount().then(response => {
+        const res = response.data
+        this.tempData = res.datas[0]
+        for (let i = 0; i < 5; i++) {
+          this.languageData[i].name = this.tempData[i].languageName
+          this.languageData[i].value = this.tempData[i].usedNum
+        }
+        console.log(this.languageData.name)
+        this.$nextTick(() => {
+          this.initChart()
+        })
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
@@ -52,22 +73,16 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: this.languageData.name
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '热门语言Top5',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
-            ],
+            data: this.languageData,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
