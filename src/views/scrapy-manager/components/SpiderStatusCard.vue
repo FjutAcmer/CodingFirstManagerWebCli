@@ -28,7 +28,6 @@
           <el-input v-model="spiderStatus.finished" style="width: 150px" disabled />
         </el-col>
       </el-row>
-      <!-- {{ spiderStatus }} -->
     </div>
   </el-card>
 </template>

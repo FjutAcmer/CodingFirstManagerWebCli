@@ -1,79 +1,34 @@
 <template>
   <div class="app-container">
     <SpiderStatusCard />
+
     <el-card>
       <div slot="header">
-        已有爬虫程序
-        <span style="color: blue">（点击图标选取）</span>
+        爬虫服务器设置
+        <span style="color: red">（请注意，部分设置仅在重启后生效）</span>
+        <el-button icon="el-icon-switch-button" size="mini" type="danger">重启</el-button>
       </div>
+
       <div>
         <el-row :gutter="5">
-          <el-col v-for="item in scrapys" :key="item" :span="2">
-            <ScrapyCard :data="item" @click.native="selectItem(item)" />
-          </el-col>
-        </el-row>
-      </div>
-    </el-card>
-    <el-card>
-      <div slot="header">爬虫状态</div>
-      <div>
-        <el-row :gutter="5">
-          <el-col :span="6">
-            目前选中爬虫：
-            <el-avatar :size="24" :src="selectedItem.targetWebsiteLogoUrl" fit="cover" />
-            {{ selectedItem.spiderName }}
-          </el-col>
-
-          <el-col :span="6">
-            爬虫程序名:
-            <el-input v-model="selectedItem.spiderName" style="width: 200px" disabled />
-          </el-col>
-          <el-col :span="6">
-            目标站点名:
-            <el-input v-model="selectedItem.targetWebsiteName" style="width: 200px" disabled />
-          </el-col>
-          <el-col :span="6">
-            站点地址:
-            <el-input v-model="selectedItem.targetWebsiteUrl" style="width: 200px" disabled />
-          </el-col>
-          <el-col :span="6">
-            部署状态:
-            <el-input v-model="selectedItem.deploy" style="width: 200px" disabled />
-          </el-col>
-          <el-col :span="6">
-            爬虫类型:
-            <el-input v-model="selectedItem.type" style="width: 200px" disabled />
-          </el-col>
-          <el-col :span="24">
-            反反爬措施:
-            <el-input v-model="selectedItem.antiMeasures" disabled />
-          </el-col>
-
-          <el-col :span="24">
-            爬取日志记录:
-            <div v-if="showLogList" class="log-list">
-              <p v-for="item in selectedItem.jobs" :key="item" class="log-list-item">
-                <span>
-                  爬取记录ID：
-                  <strong>{{ item.id }}；</strong>
-                </span>
-                <span>
-                  爬取任务ID：
-                  <strong>{{ item.jobId }}；</strong>
-                </span>
-                <span>
-                  由
-                  <strong>{{ item.createUser?item.createUser:'未知' }}</strong>
-                  执行；
-                </span>
-                <el-button
-                  size="mini"
-                  type="primary"
-                  @click="toLog(selectedItem.spiderName, item.jobId)"
-                >查看详细日志</el-button>
-              </p>
-              <p v-if="selectedItem.jobs.length===0" class="log-list-item">无记录</p>
-            </div>
+          <el-col v-for="item in spiderSetting" :key="item.id" :span="24">
+            <el-tag type="primary">{{ item.settingName }}（{{ item.settingLabel }}）</el-tag>：当前：
+            <el-input
+              v-model="item.settingValue"
+              size="small"
+              style="width: 200px"
+              disabled
+              placeholder="当前设置"
+            />改为：
+            <el-input
+              v-model="item.new"
+              size="small"
+              style="width: 200px"
+              :disabled="item.disabled"
+              placeholder="可选设置"
+            />
+            <el-button size="small" type="danger" @click="doEditorSpider(item)">修改</el-button>
+            <el-button size="small" type="primary" @click="saveSpiderSetting(item)">保存</el-button>
           </el-col>
         </el-row>
       </div>
@@ -82,64 +37,53 @@
 </template>
 
 <script>
-import ScrapyCard from './components/ScrapyCard'
-import { getItems, getSpiderJobList } from '@/api/spider'
+import { getList, saveSetting } from '@/api/spider-setting'
 import SpiderStatusCard from './components/SpiderStatusCard.vue'
 export default {
-  name: 'SpiderServer',
   components: {
-    ScrapyCard,
     SpiderStatusCard
   },
   data() {
     return {
-      scrapys: [],
-      selectedItem: '',
-      showLogList: false
+      systemSetting: [],
+      spiderSetting: [],
+      editorSystem: true,
+      editorSpider: true
     }
   },
   mounted() {
-    this.getSpiderItems()
+    this.getSpiderSettingList()
   },
   methods: {
-    getSpiderItems() {
-      this.scrapys = []
-      getItems({
-        pageNum: '1',
-        pageSize: '100'
-      }).then(response => {
+    getSpiderSettingList() {
+      this.spiderSetting = []
+      getList().then(response => {
         const res = response.data
         for (const item of res.datas[0]) {
-          item.deploy = item.deployStatus === 1 ? '已部署' : '未知状态'
-          item.type = item.spiderType === 1 ? '全站爬取' : '范围爬取'
-          this.scrapys.push(item)
+          item.disabled = true
+          item.new = ''
+          this.spiderSetting.push(item)
         }
       })
     },
-    getSpiderJobList() {
-      this.selectedItem.jobs = []
-      this.showLogList = false
-      getSpiderJobList({
-        spiderName: this.selectedItem.spiderName
-      }).then(response => {
+    doEditorSystem() {
+      this.editorSystem = !this.editorSystem
+    },
+    doEditorSpider(item) {
+      item.disabled = !item.disabled
+    },
+    saveSpiderSetting(item) {
+      item.settingValue = item.new
+      saveSetting(item).then(response => {
         const res = response.data
-        this.selectedItem.jobs = res.datas[0]
-        console.log(this.selectedItem.jobs)
-        this.showLogList = true
-      })
-    },
-    selectItem(item) {
-      this.selectedItem = item
-      this.getSpiderJobList()
-    },
-    toLog(spiderName, jobId) {
-      this.$router.push({
-        name: 'SpiderLog',
-        query: {
-          spiderName: spiderName,
-          jobId: jobId
+        if (res.datas[0] === true) {
+          this.$message.success('保存设置成功！')
+        } else {
+          this.$message.error('保存失败！稍后重试')
         }
+        item.new = ''
       })
+      item.disabled = true
     }
   }
 }
@@ -158,16 +102,6 @@ export default {
     margin-bottom: 14px;
     >>> .el-col {
       margin-bottom: 10px;
-    }
-    .log-list {
-      background-color: #f5f7fa;
-      border: 1px solid #dfe4ed;
-      color: #c0c4cc;
-      padding: 10px;
-      .log-list-item {
-        color: grey;
-        margin: 4px;
-      }
     }
   }
 }
