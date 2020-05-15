@@ -1,18 +1,20 @@
 <template>
   <el-form>
-    <el-form-item label="Name">
-      <el-input v-model.trim="user.name" />
+    <el-form-item label="用户名">
+      <span>{{ user.name }}</span>
     </el-form-item>
-    <el-form-item label="Email">
-      <el-input v-model.trim="user.email" />
+    <el-form-item label="邮箱">
+      <span>{{ user.email }}</span>
     </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="submit">Update</el-button>
-    </el-form-item>
+    <el-form-item label="注册时间">
+      <span>{{ parseTime(user.registerTime) }}</span>
+    </el-form-item>、
   </el-form>
 </template>
 
 <script>
+import { parseTime } from '@/utils'
+
 export default {
   props: {
     user: {
@@ -26,13 +28,7 @@ export default {
     }
   },
   methods: {
-    submit() {
-      this.$message({
-        message: 'user information has been updated successfully',
-        type: 'success',
-        duration: 5 * 1000
-      })
-    }
+    parseTime
   }
 }
 </script>

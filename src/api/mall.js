@@ -55,3 +55,10 @@ export function updateOrder(data) {
     params: data
   })
 }
+
+export function getOrderNewAndCancel() {
+  return request({
+    url: '/admin/mall/order/newAndCancel',
+    method: 'get'
+  })
+}

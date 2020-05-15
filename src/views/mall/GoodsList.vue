@@ -149,7 +149,7 @@ export default {
         // 延时等后端返回数据再渲染数据，否则数据渲染不上
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {

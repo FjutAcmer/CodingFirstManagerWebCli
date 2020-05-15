@@ -99,6 +99,24 @@ export function formatTime(time, option) {
 }
 
 /**
+ * @returns {Array}
+ */
+export function getWeekDay() {
+  var dateArray = []
+  // 获取当前日期前六天的日期
+  var firstDay = new Date()
+  firstDay.setDate(firstDay.getDate() - 6)
+  var dateTemp
+  // 循环获取七天日期，push到数组中
+  for (var i = 0; i < 7; i++) {
+    dateTemp = (firstDay.getMonth() + 1) + '-' + firstDay.getDate()
+    dateArray.push(dateTemp)
+    firstDay.setDate(firstDay.getDate() + 1)
+  }
+  return dateArray
+}
+
+/**
  * @param {string} url
  * @returns {Object}
  */
