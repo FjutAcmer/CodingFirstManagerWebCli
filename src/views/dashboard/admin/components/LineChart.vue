@@ -6,6 +6,26 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
+import { getWeekDay } from '@/utils'
+
+const chartType = {
+  userActive: {
+    first: '注册用户',
+    second: '活跃用户'
+  },
+  problemAcAndSubmit: {
+    first: 'ac数',
+    second: '提交数'
+  },
+  contestAcAndSubmit: {
+    first: 'ac数',
+    second: '提交数'
+  },
+  orderNewAndCancel: {
+    first: '取消订单',
+    second: '新订单'
+  }
+}
 
 export default {
   mixins: [resize],
@@ -46,7 +66,9 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.initChart()
+      setTimeout(() => {
+        this.initChart()
+      }, 1 * 1000)
     })
   },
   beforeDestroy() {
@@ -57,14 +79,15 @@ export default {
     this.chart = null
   },
   methods: {
+    getWeekDay,
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ firstData, secondData, name } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: this.getWeekDay(),
           boundaryGap: false,
           axisTick: {
             show: false
@@ -90,10 +113,10 @@ export default {
           }
         },
         legend: {
-          data: ['ac', 'submit']
+          data: chartType[name]
         },
         series: [{
-          name: 'ac', itemStyle: {
+          name: chartType[name].first, itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -104,12 +127,12 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: expectedData,
+          data: firstData,
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'submit',
+          name: chartType[name].second,
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -124,7 +147,7 @@ export default {
               }
             }
           },
-          data: actualData,
+          data: secondData,
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]

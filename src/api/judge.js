@@ -16,3 +16,17 @@ export function fetchJudgeInfo(id) {
   })
 }
 
+export function getAcAndSubmit() {
+  return request({
+    url: '/admin/judge/acAndSubmit',
+    method: 'get'
+  })
+}
+
+export function getLanguageCount() {
+  return request({
+    url: '/admin/judge/languageCount',
+    method: 'get'
+  })
+}
+

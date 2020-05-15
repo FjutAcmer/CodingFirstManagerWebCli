@@ -39,3 +39,10 @@ export function updateReview(data) {
     params: data
   })
 }
+
+export function getContestInProgress() {
+  return request({
+    url: '/admin/contest/countInProgress',
+    method: 'get'
+  })
+}

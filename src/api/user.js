@@ -40,6 +40,13 @@ export function fetchUserCheckIn(query) {
   })
 }
 
+export function getUserActive() {
+  return request({
+    url: '/admin/user/active',
+    method: 'get'
+  })
+}
+
 export function fetchUser(id) {
   return request({
     url: '/admin/user/info',

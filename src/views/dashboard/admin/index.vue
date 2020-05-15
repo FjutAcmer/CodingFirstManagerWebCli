@@ -33,7 +33,7 @@
         :xl="{span: 12}"
         style="padding-right:8px;margin-bottom:30px;"
       >
-        <transaction-table />
+        <order-table />
       </el-col>
       <el-col
         :xs="{span: 24}"
@@ -42,9 +42,7 @@
         :lg="{span: 6}"
         :xl="{span: 6}"
         style="margin-bottom:30px;"
-      >
-        <todo-list />
-      </el-col>
+      />
       <el-col
         :xs="{span: 24}"
         :sm="{span: 12}"
@@ -52,9 +50,7 @@
         :lg="{span: 6}"
         :xl="{span: 6}"
         style="margin-bottom:30px;"
-      >
-        <box-card />
-      </el-col>
+      />
     </el-row>
   </div>
 </template>
@@ -63,49 +59,85 @@
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
 import RaddarChart from './components/RaddarChart'
-import PieChart from './components/PieChart'
+import PieChart from './components/LanguageChart'
 import BarChart from './components/BarChart'
-import TransactionTable from './components/TransactionTable'
-import TodoList from './components/TodoList'
-
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+import OrderTable from './components/OrderTable'
+import { getUserActive } from '@/api/user'
+import { getAcAndSubmit } from '@/api/judge'
+import { getOrderNewAndCancel } from '@/api/mall'
 
 export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
-    LineChart,
     RaddarChart,
     PieChart,
     BarChart,
-    TransactionTable,
-    TodoList
+    OrderTable,
+    LineChart
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      dataLoading: true,
+      allData: {
+        userActive: {
+          name: 'userActive',
+          // 活跃人数
+          firstData: [],
+          // 新用户
+          secondData: []
+        },
+        problemAcAndSubmit: {
+          name: 'problemAcAndSubmit',
+          firstData: [],
+          secondData: []
+        },
+        contestAcAndSubmit: {
+          name: 'contestAcAndSubmit',
+          firstData: [],
+          secondData: []
+        },
+        orderNewAndCancel: {
+          name: 'orderNewAndCancel',
+          firstData: [],
+          secondData: []
+        }
+      },
+      lineChartData: ''
     }
+  },
+  created() {
+    this.getUserActive()
+    this.getAcAndSubmit()
+    this.getOrderNewAndCancel()
   },
   methods: {
     handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+      this.lineChartData = this.allData[type]
+    },
+    getUserActive() {
+      getUserActive().then(response => {
+        const res = response.data
+        this.allData.userActive.firstData = res.datas[0].active
+        this.allData.userActive.secondData = res.datas[0].newRegister
+        this.lineChartData = this.allData.userActive
+      })
+    },
+    getAcAndSubmit() {
+      getAcAndSubmit().then(response => {
+        const res = response.data
+        this.allData.problemAcAndSubmit.firstData = res.datas[0].totalAc
+        this.allData.problemAcAndSubmit.secondData = res.datas[0].totalSubmit
+        this.allData.contestAcAndSubmit.firstData = res.datas[0].contestAc
+        this.allData.contestAcAndSubmit.secondData = res.datas[0].contestSubmit
+      })
+    },
+    getOrderNewAndCancel() {
+      getOrderNewAndCancel().then(response => {
+        const res = response.data
+        this.allData.orderNewAndCancel.firstData = res.datas[0].newCancel
+        this.allData.orderNewAndCancel.secondData = res.datas[0].newOrder
+      })
     }
   }
 }

@@ -1,20 +1,20 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel" @click="handleSetLineChartData('userActive')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            在线用户
+            用户总数
           </div>
-          <count-to :start-val="0" :end-val="400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="totalUser" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
+      <div class="card-panel" @click="handleSetLineChartData('problemAcAndSubmit')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="documentation" class-name="card-panel-icon" />
         </div>
@@ -22,12 +22,12 @@
           <div class="card-panel-text">
             题库总数
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="totalProblem" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+      <div class="card-panel" @click="handleSetLineChartData('contestAcAndSubmit')">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="edit" class-name="card-panel-icon" />
         </div>
@@ -35,12 +35,12 @@
           <div class="card-panel-text">
             当前比赛
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="totalInProgressContest" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+      <div class="card-panel" @click="handleSetLineChartData('orderNewAndCancel')">
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             今日商城订单
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="newOrder" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,14 +57,65 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { fetchUserList } from '@/api/user'
+import { getOrderNewAndCancel } from '@/api/mall'
+import { fetchProblemList } from '@/api/problems'
+import { getContestInProgress } from '@/api/contest'
 
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      newOrder: '',
+      totalProblem: '',
+      totalInProgressContest: '',
+      totalUser: '',
+      problemsQuery: {
+        page: 1,
+        limit: 10
+      },
+      userQuery: {
+        page: 1,
+        limit: 10
+      }
+    }
+  },
+  created() {
+    this.getUsers()
+    this.getProblems()
+    this.getContests()
+    this.getOrders()
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    getUsers() {
+      fetchUserList(this.userQuery).then(response => {
+        const res = response.data
+        this.totalUser = res.datas[1]
+      })
+    },
+    getOrders() {
+      getOrderNewAndCancel().then(response => {
+        const res = response.data
+        this.order = res.datas[0].newOrder
+        this.newOrder = this.order[this.order.length - 1]
+      })
+    },
+    getProblems() {
+      fetchProblemList(this.problemsQuery).then(response => {
+        const res = response.data
+        this.totalProblem = res.datas[1]
+      })
+    },
+    getContests() {
+      getContestInProgress().then(response => {
+        const res = response.data
+        this.totalInProgressContest = res.datas[0]
+      })
     }
   }
 }
