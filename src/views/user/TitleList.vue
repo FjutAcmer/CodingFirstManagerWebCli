@@ -45,13 +45,13 @@
       </el-table-column>
       <el-table-column label="图片" width="200" align="center">
         <template slot-scope="{row}">
-          <el-image style="width: 140px; height: 140px" :src="row.pictureUrl" :fit="cover" />
+          <el-image style="width: 140px; height: 140px" :src="row.pictureUrl ? row.pictureUrl : indexImg" />
         </template>
       </el-table-column>
       <el-table-column label="类型" width="250" align="center">
-        <!-- <template slot-scope="{row}">
-          <span />
-        </template> -->
+        <template slot-scope="{row}">
+          <span>{{ row.type === 0 ? '未定义' : row.type === 0 ? '形容词' : '未定义' }}</span>
+        </template>
       </el-table-column>
       <el-table-column label="拥有时长" width="250" align="center">
         <template slot-scope="{row}">
@@ -60,11 +60,6 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
         <template slot-scope="{row,$index}">
-          <el-button
-            size="mini"
-            type="primary"
-            @click="currentRow = row, currentIndex = $index, updateDialogVisible = true"
-          >修改</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -90,37 +85,49 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="添加称号" :visible.sync="createDialogVisible">
+    <el-dialog ref="createTitleTemp" title="添加称号" :visible.sync="createDialogVisible">
       <el-form
         ref="createTitle"
-        :model="createTitleTemp"
+        :model="titleTemp"
         label-position="left"
         label-width="70px"
         style="width: 400px; margin-left:50px;"
+        :rules="titleRules"
       >
-        <el-form-item label="称号ID" prop="titleID">
-          <el-input v-model="createTitleTemp.name" />
+        <el-form-item label="称号名称" label-width="80px" prop="name">
+          <el-input v-model="titleTemp.name" />
         </el-form-item>
-        <el-form-item label="类型" prop="name">
-          <el-input v-model="createTitleTemp.type" />
+        <el-form-item label="类型" prop="type" label-width="80px">
+          <el-select v-model="titleTemp.type">
+            <el-option
+              v-for="item in titleTypeOptions"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="图片" prop="name">
-          <el-image :src="createTitleTemp.pictureUrl" />
-        </el-form-item>
-        <el-form-item label="过期时间" prop="name">
-          <el-input v-model="createTitleTemp.lifeTime" />
+        <el-form-item label="拥有期限" prop="lifeTime" label-width="80px">
+          <el-input v-model="titleTemp.lifeTime" style="width: 260px" placeholder="请输入天数，默认永久期限">
+            <template slot="append">天</template>
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="createTitle">确定</el-button>
+        <el-button
+          v-if="!orderQuery.orderCancel && row.orderStatus === '待确认'"
+          type="warning"
+          size="mini"
+          @click.native="updateOrderStatus(row,$index,1)">
+          确认订单
+        </el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchTitleList, deleteTitle, createTitle } from '@/api/title'
+import { fetchTitleList, deleteTitle, createTitle } from '@/api/system'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 
@@ -129,11 +136,19 @@ export default {
   components: { Pagination },
   directives: { waves },
   data() {
+    const validateLifeTime = (rule, value, callback) => {
+      if (isNaN(value)) {
+        callback(new Error('请输入正确的天数'))
+      } else {
+        callback()
+      }
+    }
     return {
       currentRow: '',
       currentIndex: '',
       titles: null,
       total: 0,
+      indexImg: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=291872238,3072063863&fm=26&gp=0.jpg',
       listLoading: true,
       titleQuery: {
         page: 1,
@@ -141,17 +156,29 @@ export default {
         sort: undefined,
         name: undefined
       },
+      titleTypeOptions: [
+        { name: '未定义', value: 0 },
+        { name: '形容词', value: 1 },
+        { name: '名词头衔', value: 2 }
+      ],
       deleteDialogVisible: false,
       createDialogVisible: false,
       updateDialogVisible: false,
-      createTitleTemp: {
+      titleTemp: {
         id: '',
-        type: '',
+        type: '未定义',
         name: '',
         pictureUrl: '',
         lifeTime: ''
       },
-      rules: {}
+      titleRules: {
+        name: [
+          { required: true, message: '称号名称不能为空', trigger: 'change' }
+        ],
+        lifeTime: [
+          { validator: validateLifeTime, trigger: 'change' }
+        ]
+      }
     }
   },
   created() {
@@ -166,11 +193,17 @@ export default {
         this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     resetTemp() {
-      this.createTitleTemp = {}
+      this.titleTemp = {
+        id: '',
+        type: 0,
+        name: '',
+        pictureUrl: '',
+        lifeTime: ''
+      }
     },
     handleFilter() {
       this.titleQuery.page = 1
@@ -202,7 +235,10 @@ export default {
     createTitle() {
       this.$refs['createTitle'].validate(valid => {
         if (valid) {
-          createTitle(this.createTitleTemp).then(response => {
+          if (this.titleTemp.lifeTime === '') {
+            this.titleTemp.lifeTime = -1
+          }
+          createTitle(this.titleTemp).then(response => {
             this.addDialogVisible = false
             const res = response.data
             if (res.code === 10000) {
@@ -213,7 +249,6 @@ export default {
                 duration: 2000
               })
             }
-            // this.userTitle.unshift(this.temp)
             this.getUserTitle()
           })
         }

@@ -53,7 +53,8 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      dataName: []
     }
   },
   watch: {
@@ -68,7 +69,7 @@ export default {
     this.$nextTick(() => {
       setTimeout(() => {
         this.initChart()
-      }, 1 * 1000)
+      }, 1000)
     })
   },
   beforeDestroy() {
@@ -113,7 +114,7 @@ export default {
           }
         },
         legend: {
-          data: chartType[name]
+          data: [chartType[name].first, chartType[name].second]
         },
         series: [{
           name: chartType[name].first, itemStyle: {

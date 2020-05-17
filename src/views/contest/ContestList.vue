@@ -67,7 +67,7 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <el-link type="primary" @click="getContestDetail(row)">{{ row.title }}</el-link>
+          <span>{{ row.title }}</span>
         </template>
       </el-table-column>
       <el-table-column label="开始时间" width="180" align="center">
@@ -117,7 +117,6 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getContestDetail(row)">详细信息</el-dropdown-item>
               <el-dropdown-item @click.native="getProblemList(row)">题目列表</el-dropdown-item>
               <el-dropdown-item @click.native="getJudgeList(row)">评测列表</el-dropdown-item>
               <el-dropdown-item @click.native="getUserList(row)">参赛用户列表</el-dropdown-item>
@@ -140,7 +139,7 @@
 
 <script>
 
-import { fetchContestList } from '@/api/contest'
+import { fetchContestList, fetchContestProblems } from '@/api/contest'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 import { parseTime } from '@/utils'
@@ -168,6 +167,8 @@ export default {
       ],
       contests: null,
       total: 0,
+      problems: null,
+      totalPorblems: null,
       listLoading: true,
       contestsQuery: {
         pageNum: 1,
@@ -187,14 +188,13 @@ export default {
     getContests() {
       this.listLoading = true
       this.contestsQuery.kind = this.getContestKind()
-      console.log(this.contestsQuery.kind)
       fetchContestList(this.contestsQuery).then(response => {
         const res = response.data
         this.contests = res.datas[0]
         this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {
@@ -218,15 +218,25 @@ export default {
         this.contestsQuery.sort = order
       }
     },
-    handleUpdate() {},
-    getContestDetail(row) {
+    handleUpdate(row) {
       this.$router.push({
-        path: '/contest/detail',
-        query: { id: row.contestID }
+        path: '/contest/EditContest',
+        query: { id: row.id }
       })
     },
-    getUserList() {},
-    getProblemList() {},
+    getUserList() {
+    },
+    getProblemList(row) {
+      this.listLoading = true
+      fetchContestProblems(row.id).then(response => {
+        const res = response.data
+        this.problems = res.datas[0]
+        this.totalProblems = res.datas[1]
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
+      })
+    },
     getJudgeList() {},
     getContestKind() {
       const title = this.$route.meta.title

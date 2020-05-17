@@ -379,6 +379,13 @@ export const asyncRoutes = [
         component: () => import('@/views/contest/AddContest'),
         name: 'AddContest',
         meta: { title: '新增比赛', noCache: true }
+      },
+      {
+        path: 'EditContest',
+        component: () => import('@/views/contest/EditContest'),
+        name: 'EditContest',
+        meta: { title: '修改比赛信息', noCache: true },
+        hidden: true
       }
     ]
   },
@@ -507,16 +514,16 @@ export const asyncRoutes = [
         meta: { title: '系统设置', noCache: true }
       },
       {
-        path: 'AddNotice',
-        component: () => import('@/views/system/AddNotice'),
-        name: 'AddNotice',
+        path: 'AddMessage',
+        component: () => import('@/views/system/AddMessage'),
+        name: 'AddMessage',
         meta: { title: '新增通知', noCache: true }
       },
       {
-        path: 'CheckLog',
-        component: () => import('@/views/system/CheckLog'),
-        name: 'CheckLog',
-        meta: { title: '查看Log', noCache: true }
+        path: 'CheckBugReport',
+        component: () => import('@/views/system/CheckBugReport'),
+        name: 'CheckBugReport',
+        meta: { title: '系统Bug', noCache: true }
       }
     ]
   }

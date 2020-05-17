@@ -58,9 +58,9 @@
 <script>
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
+import RaddarChart from './components/ProblemTypeChart'
 import PieChart from './components/LanguageChart'
-import BarChart from './components/BarChart'
+import BarChart from './components/ContestChart'
 import OrderTable from './components/OrderTable'
 import { getUserActive } from '@/api/user'
 import { getAcAndSubmit } from '@/api/judge'

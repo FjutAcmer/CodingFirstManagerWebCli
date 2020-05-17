@@ -32,7 +32,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column label="ID" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column label="性别" width="80" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gender }}</span>
+          <span>{{ row.gender === 1 ? '男' : row.gender === 0 ? '女' : '保密' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Motto" width="400" align="center">
@@ -186,7 +186,7 @@ export default {
       listLoading: true,
       userQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         username: undefined
       },
@@ -228,18 +228,10 @@ export default {
     },
     sortChange(data) {
       const { prop, order } = data
-      if (prop === 'id') {
-        this.userQuery.sort = order
+      if (prop === 'rating') {
+        this.goodsQuery.sort = order
         this.handleFilter()
       }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.userQuery.sort = '+id'
-      } else {
-        this.userQuery.sort = '-id'
-      }
-      this.handleFilter()
     },
     resetTemp() {
       this.temp = {

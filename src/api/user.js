@@ -75,7 +75,7 @@ export function resetPsw(username) {
   return request({
     url: '/admin/user/resetPsw',
     method: 'put',
-    params: username
+    params: { username }
   })
 }
 
