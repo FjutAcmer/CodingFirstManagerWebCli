@@ -9,7 +9,7 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">Coding First | 一码当先后台管理系统</h3>
+        <!-- <h3 class="title">Coding First | 一码当先后台管理系统</h3> -->
         <!-- TODO: 演示特供版 -->
         <h3 class="title">ACM竞赛题爬取系统 演示版</h3>
       </div>

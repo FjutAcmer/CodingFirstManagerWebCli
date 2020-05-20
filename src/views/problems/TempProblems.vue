@@ -14,17 +14,12 @@
         @keyup.enter.native="handleFilter"
       />
       <el-input
+        v-model="problemsQuery.spiderJob"
         placeholder="爬虫任务"
         style="width: 140px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-      <!-- <el-input
-        placeholder="执行爬虫"
-        style="width: 140px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />-->
       <el-input
         v-model="problemsQuery.title"
         placeholder="标题"
@@ -77,7 +72,7 @@
           <span>{{ row.problemId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="爬虫任务ID" width="100" align="center">
+      <el-table-column label="任务ID" width="65" align="center">
         <template slot-scope="{row}">
           <span>{{ row.spiderJob }}</span>
         </template>
@@ -100,13 +95,14 @@
 
       <el-table-column label="状态" width="120" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.isLocalized==='1'?'已本地化':'未本地化' }}</span>
+          <span v-if="row.isLocalized" style="color: green">已本地化 {{ row.isLocalized }}次</span>
+          <span v-else style="color: red">未本地化</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="220" class-name="small-padding">
+      <el-table-column label="操作" align="center" width="280" class-name="small-padding">
         <template slot-scope="{row,$index}">
           <el-button size="mini" type="success" @click="toLocalized(row)">本地化</el-button>
-          <el-button size="mini" type="warning" @click="toSim(row)">查重</el-button>
+          <el-button size="mini" type="warning" @click="toSim(row)">相似度查重</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -154,6 +150,7 @@ export default {
       problemsQuery: {
         page: 1,
         limit: 20,
+        spiderJob: undefined,
         sort: '+id',
         title: undefined,
         isLocalized: undefined
@@ -161,6 +158,7 @@ export default {
     }
   },
   created() {
+    this.problemsQuery.spiderJob = this.$route.query.spiderJob
     this.getProblems()
   },
   methods: {

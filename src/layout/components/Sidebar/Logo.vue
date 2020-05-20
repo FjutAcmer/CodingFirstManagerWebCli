@@ -24,9 +24,9 @@ export default {
   },
   data() {
     return {
+      // FIXME: 答辩特供版
       title: 'ACM竞赛题爬取系统',
-      logo:
-        'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      logo: 'https://i.loli.net/2020/05/19/rHx8JoBkOvmnM1V.jpg'
     }
   }
 }

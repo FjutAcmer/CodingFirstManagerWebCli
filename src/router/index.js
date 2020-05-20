@@ -71,7 +71,8 @@ export const constantRoutes = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
+        // FIXME: 答辩特供版
+        component: () => import('@/views/dashboard/index2'),
         name: 'Dashboard',
         meta: { title: '主页', icon: 'dashboard', affix: true }
       }
