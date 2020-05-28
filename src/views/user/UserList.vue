@@ -57,12 +57,12 @@
           <span>{{ row.motto }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ACB" width="60" align="center">
+      <el-table-column label="ACB" width="60" sortable="custom" prop="acb" align="center">
         <template slot-scope="{row}">
           <span>{{ row.acb }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Rating" width="80" align="center">
+      <el-table-column label="Rating" sortable="custom" prop="rating" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.rating }}</span>
         </template>
@@ -74,7 +74,7 @@
               操作菜单<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>
+              <!--              <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>-->
               <el-dropdown-item @click.native="handleRewardACB(row)">奖励ACB</el-dropdown-item>
               <el-dropdown-item @click.native="getCheckIn(row)">签到记录</el-dropdown-item>
               <el-dropdown-item @click.native="handleResetPsw(row)">重置密码</el-dropdown-item>
@@ -222,16 +222,16 @@ export default {
         page: 1,
         limit: 10,
         sort: undefined,
+        sortItem: undefined,
         username: undefined
       }
       this.getUsers()
     },
     sortChange(data) {
       const { prop, order } = data
-      if (prop === 'rating') {
-        this.goodsQuery.sort = order
-        this.handleFilter()
-      }
+      this.userQuery.sort = order
+      this.userQuery.sortItem = prop
+      this.handleFilter()
     },
     resetTemp() {
       this.temp = {

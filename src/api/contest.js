@@ -16,11 +16,11 @@ export function fetchContest(id) {
   })
 }
 
-export function fetchContestProblems(id) {
+export function fetchContestProblems(contestId) {
   return request({
-    url: '/admin/contest/problem/list',
+    url: '/contest/problem/list',
     method: 'get',
-    params: { id }
+    params: { contestId }
   })
 }
 

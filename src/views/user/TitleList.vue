@@ -55,7 +55,7 @@
       </el-table-column>
       <el-table-column label="拥有时长" width="250" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.lifeTime === -1 ? '永久' : row.lifeTime }}</span>
+          <span>{{ row.lifeTime === -1 ? '永久' : row.lifeTime + '天' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding">
@@ -112,14 +112,16 @@
             <template slot="append">天</template>
           </el-input>
         </el-form-item>
+        <el-form-item label="图片" prop="pictureUrl" label-width="80px">
+          <uploadPicture :img-url="titleTemp.pictureUrl" @getPictureUrl="getPictureUrl" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button
-          v-if="!orderQuery.orderCancel && row.orderStatus === '待确认'"
-          type="warning"
-          size="mini"
-          @click.native="updateOrderStatus(row,$index,1)">
-          确认订单
+        <el-button @click="createDialogVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="createTitle">
+          确定
         </el-button>
       </div>
     </el-dialog>
@@ -127,13 +129,14 @@
 </template>
 
 <script>
-import { fetchTitleList, deleteTitle, createTitle } from '@/api/system'
+import { fetchTitleList, deleteTitle, createTitle } from '@/api/title'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
+import uploadPicture from '@/components/Upload/uploadPicture'
 
 export default {
   name: 'TitleList',
-  components: { Pagination },
+  components: { Pagination, uploadPicture },
   directives: { waves },
   data() {
     const validateLifeTime = (rule, value, callback) => {
@@ -177,6 +180,9 @@ export default {
         ],
         lifeTime: [
           { validator: validateLifeTime, trigger: 'change' }
+        ],
+        pictureUrl: [
+          { required: true, message: '请上传图片', trigger: 'change' }
         ]
       }
     }
@@ -239,7 +245,7 @@ export default {
             this.titleTemp.lifeTime = -1
           }
           createTitle(this.titleTemp).then(response => {
-            this.addDialogVisible = false
+            this.createDialogVisible = false
             const res = response.data
             if (res.code === 10000) {
               this.$notify({
@@ -268,8 +274,12 @@ export default {
             duration: 2000
           })
           this.titles.splice(index, 1)
+          this.total -= 1
         }
       })
+    },
+    getPictureUrl(val) {
+      this.titleTemp.pictureUrl = val
     }
   }
 }

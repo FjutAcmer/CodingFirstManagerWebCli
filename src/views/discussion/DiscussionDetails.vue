@@ -49,15 +49,6 @@
         />
       </div>
     </el-card>
-    <el-card class="reply-content">
-      <div slot="header" class="clearfix">
-        <span>回复</span>
-      </div>
-      <el-input v-model="replyContent" type="textarea" rows="10" placeholder="请输入回复内容..." />
-      <div class="submit">
-        <el-button style="float: right;" type="primary">提交</el-button>
-      </div>
-    </el-card>
 
     <el-dialog
       title="提示"
@@ -132,6 +123,7 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.total -= 1
           this.discussReply.splice(index, 1)
         }
       })
@@ -154,9 +146,6 @@ export default {
 }
 </script>
 <style scoped>
-  .reply-content {
-    margin-top: 30px;
-  }
   .item {
     margin-top: 10px;
     margin-right: 60px;

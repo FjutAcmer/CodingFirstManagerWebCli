@@ -206,7 +206,7 @@ export default {
       registerCompleteInfo: '',
       computerGlobalCommit: '',
       punishTime: '',
-      rankEndTime: '',
+      rankEndTime: 400,
       gold: '10',
       silver: '30',
       copper: '60',

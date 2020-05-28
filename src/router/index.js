@@ -133,12 +133,6 @@ export const asyncRoutes = [
         component: () => import('@/views/user/TitleList'),
         name: 'TitleList',
         meta: { title: '称号管理', noCache: true }
-      },
-      {
-        path: 'Verification',
-        component: () => import('@/views/user/Verification'),
-        name: 'Verification',
-        meta: { title: '认证审核', noCache: true }
       }
     ]
   },
@@ -386,6 +380,13 @@ export const asyncRoutes = [
         name: 'EditContest',
         meta: { title: '修改比赛信息', noCache: true },
         hidden: true
+      },
+      {
+        path: 'RegisterUser',
+        component: () => import('@/views/contest/RegisterUser'),
+        name: 'RegisterUser',
+        meta: { title: '参赛用户', noCache: true },
+        hidden: true
       }
     ]
   },
@@ -403,31 +404,21 @@ export const asyncRoutes = [
         path: 'HonorRank',
         component: () => import('@/views/rank/HonorRank'),
         name: 'HonorRank',
-        meta: { title: '荣誉榜', noCache: true }
+        meta: { title: '排名管理', noCache: true }
       },
       {
-        path: 'ActiveRank',
-        component: () => import('@/views/rank/ActiveRank'),
-        name: 'ActiveRank',
-        meta: { title: '活跃榜', noCache: true }
+        path: 'AddHonor',
+        component: () => import('@/views/rank/AddHonor'),
+        name: 'AddHonor',
+        meta: { title: '添加荣誉', noCache: true },
+        hidden: true
       },
       {
-        path: 'UserRank',
-        component: () => import('@/views/rank/UserRank'),
-        name: 'UserRank',
-        meta: { title: '现役榜', noCache: true }
-      },
-      {
-        path: 'GroupRank',
-        component: () => import('@/views/rank/GroupRank'),
-        name: 'GroupRank',
-        meta: { title: '组队榜', noCache: true }
-      },
-      {
-        path: 'PointRank',
-        component: () => import('@/views/rank/PointRank'),
-        name: 'PointRank',
-        meta: { title: '积分榜', noCache: true }
+        path: 'EditHonor',
+        component: () => import('@/views/rank/EditHonor'),
+        name: 'EditHonor',
+        meta: { title: '修改荣誉', noCache: true },
+        hidden: true
       }
     ]
   },
@@ -479,7 +470,7 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Discussion',
     meta: {
-      title: '讨论管理',
+      title: '论坛管理',
       icon: 'wechat'
     },
     children: [
@@ -487,7 +478,7 @@ export const asyncRoutes = [
         path: 'Discussion',
         component: () => import('@/views/discussion/DiscussionList'),
         name: 'Discussion',
-        meta: { title: '讨论管理', icon: 'wechat' }
+        meta: { title: '论坛管理', icon: 'wechat' }
       },
       {
         path: 'DiscussionDetails',

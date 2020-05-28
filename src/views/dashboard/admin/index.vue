@@ -118,8 +118,8 @@ export default {
     getUserActive() {
       getUserActive().then(response => {
         const res = response.data
-        this.allData.userActive.firstData = res.datas[0].active
-        this.allData.userActive.secondData = res.datas[0].newRegister
+        this.allData.userActive.firstData = res.datas[0].newRegister
+        this.allData.userActive.secondData = res.datas[0].active
         this.lineChartData = this.allData.userActive
       })
     },

@@ -35,7 +35,6 @@ export default {
         { name: '', max: 1300 },
         { name: '', max: 1300 },
         { name: '', max: 1300 },
-        { name: '', max: 1300 },
         { name: '', max: 1300 }
       ],
       userTypeNum: [],

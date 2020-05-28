@@ -134,12 +134,41 @@
       :limit.sync="contestsQuery.pageSize"
       @pagination="getContests"
     />
+
+    <el-dialog
+      title="题目列表"
+      :visible.sync="problemDialogVisible"
+      width="55%"
+    >
+      <el-table
+        v-loading="listLoading"
+        :data="problems"
+        fit
+        highlight-current-row
+      >
+        <el-table-column label="顺序" align="center" width="120">
+          <template slot-scope="{row}">
+            <span>{{ row.problemOrder + 1 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="题目ID" width="120" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.problemId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="标题" width="500" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.title }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 
-import { fetchContestList, fetchContestProblems } from '@/api/contest'
+  import {fetchContestList, fetchContestProblems} from '@/api/contest'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 import { parseTime } from '@/utils'
@@ -152,6 +181,7 @@ export default {
     return {
       currentRow: '',
       currentIndex: '',
+      problemDialogVisible: false,
       permissionOptions: [
         { name: '公开', value: 0 },
         { name: '密码', value: 1 },
@@ -168,7 +198,7 @@ export default {
       contests: null,
       total: 0,
       problems: null,
-      totalPorblems: null,
+      totalProblems: null,
       listLoading: true,
       contestsQuery: {
         pageNum: 1,
@@ -192,6 +222,18 @@ export default {
         const res = response.data
         this.contests = res.datas[0]
         this.total = res.datas[1]
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.5 * 1000)
+      })
+    },
+    getProblemList(row) {
+      this.listLoading = true
+      fetchContestProblems(row.id).then(response => {
+        const res = response.data
+        this.problems = res.datas[0]
+        this.totalProblems = res.datas[1]
+        this.problemDialogVisible = true
         setTimeout(() => {
           this.listLoading = false
         }, 0.5 * 1000)
@@ -224,20 +266,18 @@ export default {
         query: { id: row.id }
       })
     },
-    getUserList() {
-    },
-    getProblemList(row) {
-      this.listLoading = true
-      fetchContestProblems(row.id).then(response => {
-        const res = response.data
-        this.problems = res.datas[0]
-        this.totalProblems = res.datas[1]
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
+    getUserList(row) {
+      this.$router.push({
+        path: '/contest/RegisterUser',
+        query: { id: row.contestId }
       })
     },
-    getJudgeList() {},
+    getJudgeList(row) {
+      this.$router.push({
+        path: '/Judge',
+        query: { id: row.id }
+      })
+    },
     getContestKind() {
       const title = this.$route.meta.title
       if (title === '练习赛') {

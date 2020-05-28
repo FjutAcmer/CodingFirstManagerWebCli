@@ -45,11 +45,11 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登陆</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <div style="position:relative">
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          其他账号登陆
+          其他账号登录
         </el-button>
       </div>
     </el-form>

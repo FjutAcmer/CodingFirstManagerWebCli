@@ -42,7 +42,7 @@
       </el-table-column>
       <el-table-column label="标题" width="400" align="center">
         <template slot-scope="{row}">
-          <el-link type="primary" :href="row.originUrl">{{ row.title }}</el-link>
+          <el-link type="primary" target="_blank" @click="getProblemInfo(row)">{{ row.title }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" width="200" align="center">
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { fetchVJProblemList, fetchOjs } from '@/api/problems'
+import { fetchVJProblemList, fetchOjs, fetchVJProblem } from '@/api/problems'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 import { parseTime } from '@/utils'
@@ -99,6 +99,7 @@ export default {
       vjProblems: null,
       Ojs: null,
       total: 0,
+      problemInfo: '',
       listLoading: true,
       vjProblemsQuery: {
         pageNum: 1,
@@ -132,7 +133,6 @@ export default {
       })
     },
     getOjs() {
-      this.listLoading = true
       fetchOjs().then(response => {
         const res = response.data
         this.Ojs = res.datas[0]
@@ -150,6 +150,17 @@ export default {
         duration: 2000
       })
       this.dialogVisible = false
+    },
+    getProblemInfo(row) {
+      const query = {
+        OJId: row.originOJ,
+        probNum: row.originProb
+      }
+      fetchVJProblem(query).then(response => {
+        const res = response.data
+        this.problemInfo = res.datas[0]
+      })
+      window.open(this.problemInfo.problemDescriptionUrl)
     },
     clearFilter() {
       this.vjProblemsQuery = {
@@ -172,12 +183,6 @@ export default {
     },
     handleUpdate() {
       this.getVJProblems()
-      this.$notify({
-        title: '成功',
-        message: '更新成功',
-        type: 'success',
-        duration: 2000
-      })
     },
     goProblemDetail(row) {
       this.$router.push({ path: '/problems/VJProblemDetail', query: { probNum: row.originProb, OJId: row.originOJ }})

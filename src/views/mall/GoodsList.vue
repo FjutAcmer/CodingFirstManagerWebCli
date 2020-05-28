@@ -57,7 +57,7 @@
         <template slot-scope="{row}">
           <el-image
             style="width: 100px; height: 100px"
-            :src="row.pictureUrl"
+            :src="row.pictureUrl === '' ? indexImg : row.pictureUrl"
             :fit="cover"
           />
         </template>
@@ -120,6 +120,7 @@ export default {
     return {
       currentRow: '',
       currentIndex: '',
+      indexImg: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=291872238,3072063863&fm=26&gp=0.jpg',
       deleteDialogVisible: false,
       goods: null,
       total: 0,

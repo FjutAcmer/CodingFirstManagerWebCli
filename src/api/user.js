@@ -47,11 +47,11 @@ export function getUserActive() {
   })
 }
 
-export function fetchUser(id) {
+export function fetchUser(username) {
   return request({
     url: '/admin/user/info',
     method: 'get',
-    params: { id }
+    params: { username }
   })
 }
 
