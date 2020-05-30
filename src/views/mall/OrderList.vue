@@ -2,14 +2,8 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="orderQuery.orderUser" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="orderQuery.goodsId" placeholder="商品ID" filterable clearable class="filter-item" style="width: 130px">
-        <el-option
-          v-for="item in orders"
-          :key="item.goodsId"
-          :value="item.goodsId"
-        />
-      </el-select>
-      <el-select v-model="orderQuery.orderStatus" placeholder="订单状态" @change="handleFilter" class="filter-item" style="width: 130px">
+      <el-input v-model="orderQuery.goodsId" placeholder="商品ID" class="filter-item" style="width: 130px" />
+      <el-select v-model="orderQuery.orderStatus" placeholder="订单状态" class="filter-item" style="width: 130px" @change="handleFilter">
         <el-option
           v-for="item in orderStatusOptions"
           :key="item.value"
@@ -46,7 +40,7 @@
           <span>{{ row.goodsId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="160" align="center">
+      <el-table-column label="用户名" width="140" align="center">
         <template slot-scope="{row}">
           <el-link type="primary">{{ row.orderUser }}</el-link>
         </template>
@@ -77,35 +71,40 @@
             v-if="!orderQuery.orderCancel && row.orderStatus === '待确认'"
             type="warning"
             size="mini"
-            @click.native="updateOrderStatus(row,$index,1)">
+            @click.native="updateOrderStatus(row,$index,1)"
+          >
             确认订单
           </el-button>
           <el-button
             v-if="!orderQuery.orderCancel && row.orderStatus === '待发货'"
             type="primary"
             size="mini"
-            @click.native="updateOrderStatus(row,$index,2)">
+            @click.native="updateOrderStatus(row,$index,2)"
+          >
             发货
           </el-button>
           <el-button
-            v-if="!orderQuery.orderCancel && row.orderStatus === '待确认' || !orderQuery.orderCancel &&  row.orderStatus === '待发货'"
+            v-if="!orderQuery.orderCancel && row.orderStatus === '待确认' || !orderQuery.orderCancel && row.orderStatus === '待发货'"
             type="danger"
             size="mini"
-            @click.native="updateOrderStatus(row,$index,-1)">
+            @click.native="updateOrderStatus(row,$index,-1)"
+          >
             取消订单
           </el-button>
           <el-button
             v-if="orderQuery.orderCancel === 1 && row.orderCancel === 1"
             type="warning"
             size="mini"
-            @click.native="updateOrderStatus(row,$index,-1), updateOrderCancel(row,$index,0)">
+            @click.native="updateOrderStatus(row,$index,-1), updateOrderCancel(row,$index,0)"
+          >
             同意申请
           </el-button>
           <el-button
             v-if="orderQuery.orderCancel === 1 && row.orderCancel === 1"
             type="danger"
             size="mini"
-            @click.native="updateOrderCancel(row,$index,0)">
+            @click.native="updateOrderCancel(row,$index,0)"
+          >
             拒绝申请
           </el-button>
         </template>
@@ -168,7 +167,7 @@ export default {
         this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {

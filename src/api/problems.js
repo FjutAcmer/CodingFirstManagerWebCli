@@ -31,6 +31,13 @@ export function fetchProblem(problemId) {
   })
 }
 
+export function getSubmitTypeCount() {
+  return request({
+    url: '/admin/problems/problemTypeCount',
+    method: 'get'
+  })
+}
+
 export function createProblem(data) {
   return request({
     url: '/admin/problems/create',

@@ -63,7 +63,7 @@
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column label="ID" prop="id" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
@@ -80,7 +80,7 @@
       </el-table-column>
       <el-table-column label="评测结果" width="200" align="center">
         <template slot-scope="{row}">
-          <el-button :type="resultType(row.result)" size="mini" plain>
+          <el-button :type="resultType(row)" size="mini" plain>
             <span>{{ row.result }}</span>
           </el-button>
         </template>
@@ -105,7 +105,7 @@
           <span>{{ row.codeLength }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="提交时间" width="200" align="center">
+      <el-table-column label="提交时间" prop="submitTime" width="200" sortable="custom" align="center">
         <template slot-scope="{row}">
           <span>{{ parseTime(row.submitTime) }}</span>
         </template>
@@ -119,6 +119,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="getDetail(row)">查看代码</el-dropdown-item>
+              <el-dropdown-item @click.native="getResultInfo(row)">查看评测信息</el-dropdown-item>
               <el-dropdown-item @click.native="reJudge(row, $index)">重判</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -141,11 +142,25 @@
         </div>
       </el-card>
     </el-dialog>
+
+    <el-dialog title="评测信息" :visible.sync="resultDialogVisible" width="50%">
+      <el-card class="box-card">
+        <el-form>
+          <el-form-item label="提交时间">
+            <span>{{ parseTime(resultInfo.time) }}</span>
+          </el-form-item>
+          <el-form-item label="测评信息">
+            <span>{{ resultInfo.info }}</span>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { fetchJudgeInfo, fetchJudgeList } from '@/api/judge'
+import { fetchJudgeInfo, fetchJudgeList, getJudgeResult, submitJudge } from '@/api/judge'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 import { parseTime } from '@/utils'
@@ -161,6 +176,8 @@ export default {
       codeDialogVisible: false,
       judges: null,
       judgeInfo: [],
+      resultInfo: '',
+      resultDialogVisible: false,
       total: 0,
       languageOption: [
         { name: 'G++', value: 0 },
@@ -191,6 +208,7 @@ export default {
         { name: 'Judging', value: 12 },
         { name: 'Score', value: 13 }
       ],
+      code: '',
       listLoading: true,
       judgesQuery: {
         page: 1,
@@ -211,23 +229,62 @@ export default {
     parseTime,
     async getJudges() {
       this.listLoading = true
+      if (this.$route.query.id !== '') {
+        this.judgesQuery.contestId = this.$route.query.id
+      }
       fetchJudgeList(this.judgesQuery).then(response => {
         const res = response.data
         this.judges = res.datas[0]
         this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     getDetail(row) {
-      this.codeDialogVisible = true
       this.listLoading = true
       fetchJudgeInfo(row.id).then(response => {
         const res = response.data
         this.judgeInfo = res.datas[0]
+        this.listLoading = false
       })
       this.codeDialogVisible = true
+    },
+    getResultInfo(row) {
+      this.listLoading = true
+      getJudgeResult(row.id).then(response => {
+        const res = response.data
+        const temp = res.datas[0]
+        this.resultInfo = temp[0]
+        this.listLoading = false
+      })
+      this.resultDialogVisible = true
+    },
+    reJudge(row) {
+      fetchJudgeInfo(row.id).then(response => {
+        const res = response.data
+        this.code = res.datas[0].code
+      })
+      this.listLoading = true
+      const data = {
+        problemId: row.problemId,
+        language: row.language,
+        contestId: row.contestId,
+        username: row.username,
+        code: this.code
+      }
+      submitJudge(data).then(response => {
+        const res = response.data
+        if (res.code === 10000) {
+          this.$message({
+            title: '成功',
+            message: '提交完成',
+            type: 'success',
+            duration: 2000
+          })
+        }
+        this.listLoading = false
+      })
     },
     handleFilter() {
       this.judgesQuery.page = 1
@@ -247,15 +304,15 @@ export default {
     },
     sortChange(data) {
       const { prop, order } = data
-      if (prop === 'id') {
+      if (prop === 'submitTime') {
         this.judgesQuery.sort = order
         this.handleFilter()
       }
     },
     resultType(row) {
-      let type = ''
-      if (row.resultType('Accepted')) {
-        type = 'success'
+      console.log(row.resultType)
+      if (row.result === 'Accepted') {
+        return 'success'
       } else if (
         row.result === 'Complication Error' ||
         row.result === 'Presentation Error' ||
@@ -265,9 +322,10 @@ export default {
         row.result === 'Memory Limit Exceeded' ||
         row.result === 'Output Limit Exceeded'
       ) {
-        type = 'danger'
+        return 'danger'
+      } else {
+        return 'warning'
       }
-      return 'warning'
     },
     goJudgeDetail(row) {
       this.$router.push({

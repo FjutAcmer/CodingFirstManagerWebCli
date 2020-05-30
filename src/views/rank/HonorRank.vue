@@ -24,6 +24,9 @@
       <el-button v-waves class="filter-item" type="primary" @click="clearFilter">
         查看所有
       </el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+        添加荣誉
+      </el-button>
     </div>
 
     <el-table
@@ -80,7 +83,7 @@
           <span>{{ row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" :width="honorRanksQuery.contestKind === '自定义' ? '140' : '200'" class-name="small-padding">
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding">
         <template slot-scope="{row, $index}">
           <el-button size="mini" type="primary" @click="handleUpdate(row)">
             修改
@@ -142,8 +145,7 @@ export default {
         { name: '世界总决赛', value: 3 },
         { name: '全国蓝桥杯大赛', value: 4 },
         { name: 'ACM全国邀请赛', value: 5 },
-        { name: '全国大学生程序设计竞赛', value: 6 },
-        { name: '三等奖', value: 7 }
+        { name: '全国大学生程序设计竞赛', value: 6 }
       ],
       honorRanks: null,
       total: 0,
@@ -171,7 +173,7 @@ export default {
         this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {
@@ -196,7 +198,11 @@ export default {
         this.handleFilter()
       }
     },
-    handleUpdate() {
+    handleUpdate(row) {
+      this.$router.push({ path: '/rank/EditHonor', query: { id: row.id }})
+    },
+    handleCreate() {
+      this.$router.push({ path: '/rank/AddHonor' })
     },
     deleteHonor() {
       this.dialogVisible = false
@@ -211,6 +217,7 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.total -= 1
           this.honorRanks.splice(index, 1)
         }
       })

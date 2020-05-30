@@ -61,6 +61,19 @@ export default {
         const res = response.data
         this.orders = res.datas[0]
       })
+    },
+    statusType(orderStatus) {
+      let type = ''
+      if (orderStatus === '订单取消') {
+        type = 'danger'
+      } else if (orderStatus === '待确认' || orderStatus === '待发货') {
+        type = 'warning'
+      } else if (orderStatus === '订单完成') {
+        type = 'success'
+      } else {
+        type = 'primary'
+      }
+      return type
     }
   }
 }

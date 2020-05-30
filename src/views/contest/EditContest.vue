@@ -40,11 +40,12 @@
           </el-form-item>
           <el-form-item label="种类">
             <el-select v-model="contestInfo.contestKind">
-              <el-option value="练习" />
-              <el-option value="积分" />
-              <el-option value="趣味" />
-              <el-option value="正式" />
-              <el-option value="自定义" />
+              <el-option
+                v-for="item in contestKindOptions"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="题目列表" prop="problems">
@@ -135,7 +136,7 @@
             <el-input-number v-model="copper" />  %
           </el-form-item>
           <el-form-item class="form-button">
-            <el-button type="primary" @click="createContest">提交</el-button>
+            <el-button type="primary" @click="updateContest">提交</el-button>
             <el-button @click="goBack">取消</el-button>
           </el-form-item>
         </el-form>
@@ -146,13 +147,13 @@
 
 <script>
 
-import { createContest } from '@/api/contest'
+import { updateContest, fetchContest } from '@/api/contest'
 import { fetchAllProblems } from '@/api/problems'
 import Tinymce from '@/components/Tinymce'
 import { parseTime } from '@/utils'
 
 export default {
-  name: 'AddContest',
+  name: 'EditContest',
   components: { Tinymce },
   data() {
     const checkProblems = (rule, value, callback) => {
@@ -182,31 +183,20 @@ export default {
         { name: '练习模式', value: 2 },
         { name: '积分模式', value: 3 }
       ],
-      contestInfo: {
-        title: '',
-        contestKind: 0,
-        beginTime: '',
-        endTime: '',
-        registerBeginTime: '',
-        registerEndTime: '',
-        permissionType: '公开',
-        problems: [],
-        description: '',
-        password: '',
-        computerRating: 0,
-        rankType: 0,
-        problemPutTag: 0,
-        statusReadOut: 0,
-        showRegisterList: 0,
-        showBorderList: 0,
-        showOtherStatus: 0,
-        createUser: ''
-      },
+      contestKindOptions: [
+        { name: '练习', value: 0 },
+        { name: '积分', value: 1 },
+        { name: '趣味', value: 2 },
+        { name: '正式', value: 3 },
+        { name: '隐藏', value: 4 },
+        { name: '自定义', value: 5 }
+      ],
+      contestInfo: '',
       showRegisterOut: '',
       registerCompleteInfo: '',
       computerGlobalCommit: '',
       punishTime: '',
-      rankEndTime: 400,
+      rankEndTime: '',
       gold: '10',
       silver: '30',
       copper: '60',
@@ -222,7 +212,7 @@ export default {
   },
   created() {
     this.getProblemList()
-    this.contestInfo.contestKind = this.$route.query.kind ? this.$route.query.kind : '练习'
+    this.getContestInfo()
   },
   methods: {
     parseTime,
@@ -233,22 +223,36 @@ export default {
         this.problemList = res.datas[0]
       })
     },
-    createContest() {
+    getContestInfo() {
+      this.listLoading = true
+      const id = this.$route.query.id
+      fetchContest(id).then(response => {
+        const res = response.data
+        this.contestInfo = res.datas[0]
+        this.contestBeginEndTime.push(this.contestInfo.beginTime)
+        this.contestBeginEndTime.push(this.contestInfo.endTime)
+        this.registerBeginEndTime.push(this.contestInfo.registerBeginTime)
+        this.registerBeginEndTime.push(this.contestInfo.registerEndTime)
+        this.contestInfo.computerRating = this.contestInfo.computerRating === 1
+        this.contestInfo.problemPutTag = this.contestInfo.problemPutTag === 1
+        this.contestInfo.showOtherStatus = this.contestInfo.showOtherStatus === 1
+        this.contestInfo.showBorderList = this.contestInfo.showBorderList === 1
+      })
+    },
+    updateContest() {
       this.$refs.contestInfo.validate(valid => {
         if (valid) {
-          this.contestInfo.contestKind = this.getContestKind()
-          this.contestInfo.permissionType = this.getPermissionType()
-          this.contestInfo.computerRating = this.contestInfo.computerRating ? 1 : 0
-          this.contestInfo.problemPutTag = this.contestInfo.problemPutTag ? 1 : 0
-          this.contestInfo.showOtherStatus = this.contestInfo.showOtherStatus ? 1 : 0
-          this.contestInfo.showBorderList = this.contestInfo.showBorderList ? 1 : 0
           if (this.checkTime()) {
-            createContest(this.contestInfo).then(response => {
+            this.contestInfo.computerRating = this.contestInfo.computerRating ? 1 : 0
+            this.contestInfo.problemPutTag = this.contestInfo.problemPutTag ? 1 : 0
+            this.contestInfo.showOtherStatus = this.contestInfo.showOtherStatus ? 1 : 0
+            this.contestInfo.showBorderList = this.contestInfo.showBorderList ? 1 : 0
+            updateContest(this.contestInfo).then(response => {
               const res = response.data
               if (res.code === 10000) {
                 this.$message({
                   title: '成功',
-                  message: '创建成功',
+                  message: '修改成功',
                   type: 'success',
                   duration: 2000
                 })

@@ -83,7 +83,7 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>
+              <!--              <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>-->
               <el-dropdown-item @click.native="handleRewardACB(row)">奖励ACB</el-dropdown-item>
               <el-dropdown-item @click.native="getCheckIn(row)">签到记录</el-dropdown-item>
               <el-dropdown-item @click.native="handleResetPsw(row)">重置密码</el-dropdown-item>
@@ -194,7 +194,7 @@ export default {
       listLoading: true,
       userQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: undefined,
         username: undefined
       },
@@ -230,23 +230,15 @@ export default {
         page: 1,
         limit: 10,
         sort: undefined,
+        sortItem: undefined,
         username: undefined
       }
       this.getUsers()
     },
     sortChange(data) {
       const { prop, order } = data
-      if (prop === 'id') {
-        this.userQuery.sort = order
-        this.handleFilter()
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.userQuery.sort = '+id'
-      } else {
-        this.userQuery.sort = '-id'
-      }
+      this.userQuery.sort = order
+      this.userQuery.sortItem = prop
       this.handleFilter()
     },
     resetTemp() {
