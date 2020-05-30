@@ -1,15 +1,14 @@
 <template>
   <div class="app-container">
-    <SpiderStatusCard />
     <el-card>
       <div slot="header">
         已有爬虫程序
-        <span style="color: red">（双击图标选取）</span>
+        <span style="color: blue">（点击图标选取）</span>
       </div>
       <div>
         <el-row :gutter="5">
           <el-col v-for="item in scrapys" :key="item" :span="2">
-            <ScrapyCard :data="item" @dblclick.native="selectItem(item)" />
+            <ScrapyCard :data="item" @click.native="selectItem(item)" />
           </el-col>
         </el-row>
       </div>
@@ -19,9 +18,11 @@
       <div>
         <el-row :gutter="5">
           <el-col :span="6">
-            爬虫名:
-            <el-input v-model="selectedItem.spiderName" style="width: 200px" disabled />
+            目前选中爬虫：
+            <el-avatar :size="24" :src="selectedItem.targetWebsiteLogoUrl" fit="cover" />
+            {{ selectedItem.spiderName }}
           </el-col>
+
           <el-col :span="6">
             爬虫程序名:
             <el-input v-model="selectedItem.spiderName" style="width: 200px" disabled />
@@ -81,13 +82,11 @@
 
 <script>
 import ScrapyCard from './components/ScrapyCard'
-import SpiderStatusCard from './components/SpiderStatusCard.vue'
 import { getItems, getSpiderJobList } from '@/api/spider'
+
 export default {
-  name: 'QueryScrapy',
   components: {
-    ScrapyCard,
-    SpiderStatusCard
+    ScrapyCard
   },
   data() {
     return {

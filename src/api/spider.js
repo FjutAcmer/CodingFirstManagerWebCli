@@ -7,6 +7,14 @@ export function getStatus() {
   })
 }
 
+export function getSites(data) {
+  return request({
+    url: '/admin/spider/sites',
+    method: 'post',
+    params: data
+  })
+}
+
 export function getItems(data) {
   return request({
     url: '/admin/spider/items',
@@ -18,6 +26,14 @@ export function getItems(data) {
 export function startSpider(data) {
   return request({
     url: '/admin/spider/start',
+    method: 'post',
+    data: data
+  })
+}
+
+export function rangeCheck(data) {
+  return request({
+    url: '/admin/spider/range/check',
     method: 'post',
     data: data
   })

@@ -19,12 +19,12 @@
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-      <el-input
+      <!-- <el-input
         placeholder="执行爬虫"
         style="width: 140px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
-      />
+      />-->
       <el-input
         v-model="problemsQuery.title"
         placeholder="标题"
@@ -50,6 +50,7 @@
         @click="handleFilter"
       >搜索</el-button>
       <el-button v-waves class="filter-item" type="primary" @click="clearFilter">查看所有</el-button>
+      <el-button class="filter-item" type="danger" @click="toGetProblem()">爬取题目</el-button>
     </div>
 
     <el-table
@@ -102,9 +103,10 @@
           <span>{{ row.isLocalized==='1'?'已本地化':'未本地化' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="160" class-name="small-padding">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding">
         <template slot-scope="{row,$index}">
           <el-button size="mini" type="success" @click="toLocalized(row)">本地化</el-button>
+          <el-button size="mini" type="warning" @click="toSim(row)">查重</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -168,6 +170,19 @@ export default {
         query: {
           id: row.id
         }
+      })
+    },
+    toSim(row) {
+      this.$router.push({
+        name: 'SimProblem',
+        query: {
+          id: row.id
+        }
+      })
+    },
+    toGetProblem() {
+      this.$router.push({
+        name: 'GetProblems'
       })
     },
     getProblems() {

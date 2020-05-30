@@ -4,63 +4,18 @@
       <span>请注意，部分设置仅在重启后生效</span>
     </div>
     <el-card>
-      <div slot="header">
-        系统设置【全局】
-        <el-button type="danger">修改</el-button>
-        <el-button type="primary">保存</el-button>
-      </div>
+      <div slot="header">全局系统设置</div>
       <div>
         <el-row :gutter="5">
-          <el-col :span="12">
-            系统设置1 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
-          </el-col>
-          <el-col :span="12">
-            系统设置2 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
-          </el-col>
-          <el-col :span="12">
-            系统设置3 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
-          </el-col>
-          <el-col :span="12">
-            系统设置4 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
-          </el-col>
-        </el-row>
-      </div>
-    </el-card>
-    <el-card>
-      <div slot="header">
-        系统设置【爬虫模块】
-        <el-button type="danger">修改</el-button>
-        <el-button type="primary">保存</el-button>
-      </div>
-      <div>
-        <el-row :gutter="5">
-          <el-col :span="12">
-            系统设置1 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
-          </el-col>
-          <el-col :span="12">
-            系统设置2 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
-          </el-col>
-          <el-col :span="12">
-            系统设置3 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
-          </el-col>
-          <el-col :span="12">
-            系统设置4 ：当前：
-            <el-input style="width: 200px" disabled placeholder="当前设置" />可选：
-            <el-input style="width: 200px" disabled placeholder="可选设置" />
+          <el-col v-for="item in systemSetting" :key="item.key" :span="12">
+            <el-tag type="success">{{ item.key }}</el-tag>：当前：
+            <el-input v-model="item.value" style="width: 120px" disabled placeholder="当前设置" />改为：
+            <el-input
+              v-model="item.new"
+              style="width: 120px"
+              :disabled="editorSystem"
+              placeholder="可选设置"
+            />
           </el-col>
         </el-row>
       </div>
@@ -69,7 +24,21 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      systemSetting: []
+    }
+  },
+  mounted() {
+    this.getSpiderSettingList()
+  },
+  methods: {
+    doEditorSystem() {
+      this.editorSystem = !this.editorSystem
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -84,7 +84,7 @@
               <el-col :span="12">
                 <strong>
                   题目题号
-                  <span style="color: red">（非数据库题号！请甄别）：</span>
+                  <span style="color: red">（非数据库题号！请甄别）</span>：
                 </strong>
                 <el-input
                   v-model="localProblemId"
@@ -139,7 +139,7 @@
     </el-row>
     <el-card>
       <el-button type="primary" @click="simProblem()">开始查重</el-button>
-      <el-button type="danger">本地化题目</el-button>
+      <el-button type="danger" @click="toLocalized()">本地化题目</el-button>
     </el-card>
     <el-card>
       <div slot="header">查重结果</div>
@@ -177,6 +177,7 @@ import { getInfo, simTwoProblem } from '@/api/spider-problem'
 import { fetchProblem } from '@/api/problems'
 export default {
   name: 'SimProblem',
+
   data() {
     return {
       getProblemId: '',
@@ -186,7 +187,21 @@ export default {
       simInfo: ''
     }
   },
+  mounted() {
+    if (this.$route.query.id) {
+      this.getProblemId = this.$route.query.id
+      this.querySpiderGetProblem()
+    }
+  },
   methods: {
+    toLocalized() {
+      this.$router.push({
+        name: 'ProblemLocalized',
+        query: {
+          id: this.getProblemId
+        }
+      })
+    },
     querySpiderGetProblem() {
       getInfo({
         id: this.getProblemId
@@ -241,10 +256,10 @@ export default {
     pre {
       background-color: #f5f7fa;
       border: 1px solid #dfe4ed;
-      white-space: pre-wrap;
-      word-wrap: break-word;
       font-size: 16px;
       padding: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   }
 }

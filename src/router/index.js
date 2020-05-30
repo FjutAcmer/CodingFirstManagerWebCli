@@ -150,7 +150,7 @@ export const asyncRoutes = [
   },
 
   /** 路由表过长可以把它们分割成小模块 **/
-  // add by axiang [2020/4/17] 题目爬取模块
+  // add by axiang [2020/4/17] 题目爬取相关，目前屏蔽
   {
     path: '/scrapy',
     component: Layout,
@@ -160,6 +160,7 @@ export const asyncRoutes = [
       title: '题目爬取',
       icon: 'international'
     },
+    hidden: true,
     children: [
       {
         path: 'GetProblems',
@@ -179,44 +180,6 @@ export const asyncRoutes = [
         name: 'ProblemLocalized',
         meta: { title: '题目本地化', noCache: true }
 
-      }
-    ]
-  },
-  // add by axiang [2020/4/17] 爬虫管理
-  {
-    path: '/scrapyManager',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'ScrapyManager',
-    meta: {
-      title: '爬虫管理',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'ScrapyServer',
-        component: () => import('@/views/scrapy-manager/ScrapyServer'),
-        name: 'ScrapyServer',
-        meta: { title: '爬虫服务器', noCache: true }
-      },
-      {
-        path: 'QueryScrapy',
-        component: () => import('@/views/scrapy-manager/QueryScrapy'),
-        name: 'QueryScrapy',
-        meta: { title: '爬虫状态', noCache: true }
-      },
-      {
-        path: 'SpiderMission',
-        component: () => import('@/views/scrapy-manager/SpiderMission'),
-        name: 'SpiderMission',
-        meta: { title: '爬虫任务', noCache: true }
-      },
-      {
-        path: 'SpiderLog',
-        component: () => import('@/views/scrapy-manager/SpiderLog'),
-        name: 'SpiderLog',
-        meta: { title: '爬虫任务日志', noCache: true },
-        hidden: true
       }
     ]
   },
@@ -242,18 +205,12 @@ export const asyncRoutes = [
         name: 'TempProblems',
         meta: { title: '爬取暂存题库', noCache: true }
       },
-      {
-        path: 'TempProblemDetail',
-        component: () => import('@/views/problems/TempProblemDetail'),
-        name: 'TempProblemDetail',
-        meta: { title: '爬取题目详情', noCache: true },
-        hidden: true
-      },
+
       {
         path: 'VJProblems',
         component: () => import('@/views/problems/VJProblems'),
         name: 'VJProblems',
-        meta: { title: 'VJ题库', noCache: true }
+        meta: { title: 'VJ远程题库', noCache: true }
       },
       {
         path: 'ProblemsTag',
@@ -269,6 +226,13 @@ export const asyncRoutes = [
         hidden: true
       },
       {
+        path: 'TempProblemDetail',
+        component: () => import('@/views/problems/TempProblemDetail'),
+        name: 'TempProblemDetail',
+        meta: { title: '爬取题目详情', noCache: true },
+        hidden: true
+      },
+      {
         path: 'ProblemDetail',
         component: () => import('@/views/problems/ProblemDetail'),
         name: 'ProblemDetail',
@@ -279,7 +243,7 @@ export const asyncRoutes = [
         path: 'VJProblemDetail',
         component: () => import('@/views/problems/VJProblemDetail'),
         name: 'VJProblemDetail',
-        meta: { title: '题目详情', noCache: true },
+        meta: { title: 'VJ题目详情', noCache: true },
         hidden: true
       }
     ]
@@ -485,6 +449,38 @@ export const asyncRoutes = [
         component: () => import('@/views/discussion/DiscussionDetails'),
         name: 'DiscussionDetails',
         meta: { title: '讨论内容' },
+        hidden: true
+      }
+    ]
+  },
+  // add by axiang [2020/4/17] 爬虫管理
+  {
+    path: '/scrapyManager',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'ScrapyManager',
+    meta: {
+      title: '爬虫管理',
+      icon: 'nested'
+    },
+    children: [
+      {
+        path: 'SpiderServer',
+        component: () => import('@/views/scrapy-manager/SpiderServer'),
+        name: 'SpiderServer',
+        meta: { title: '爬虫服务器', noCache: false }
+      },
+      {
+        path: 'SpiderSetting',
+        component: () => import('@/views/scrapy-manager/SpiderList'),
+        name: 'SpiderSetting',
+        meta: { title: '爬虫列表', noCache: true }
+      },
+      {
+        path: 'SpiderLog',
+        component: () => import('@/views/scrapy-manager/SpiderLog'),
+        name: 'SpiderLog',
+        meta: { title: '爬虫任务日志', noCache: true },
         hidden: true
       }
     ]

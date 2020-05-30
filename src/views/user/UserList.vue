@@ -1,13 +1,21 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="userQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">
-        查看所有
-      </el-button>
+      <el-input
+        v-model="userQuery.username"
+        placeholder="用户名"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >搜索</el-button>
+      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">查看所有</el-button>
     </div>
 
     <el-table
@@ -32,7 +40,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="ID" align="center" width="80">
+      <el-table-column label="用户ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
@@ -49,20 +57,20 @@
       </el-table-column>
       <el-table-column label="性别" width="80" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gender === 1 ? '男' : row.gender === 0 ? '女' : '保密' }}</span>
+          <span>{{ row.gender===0 ? '保密':row.gender===1 ? '男':'女' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Motto" width="400" align="center">
+      <el-table-column label="个性签名" width="400" align="center">
         <template slot-scope="{row}">
           <span>{{ row.motto }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ACB" width="60" sortable="custom" prop="acb" align="center">
+      <el-table-column label="ACB数量" width="60" align="center">
         <template slot-scope="{row}">
           <span>{{ row.acb }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Rating" sortable="custom" prop="rating" width="80" align="center">
+      <el-table-column label="积分值" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.rating }}</span>
         </template>
@@ -71,7 +79,8 @@
         <template slot-scope="{row}">
           <el-dropdown>
             <el-button type="primary" size="mini">
-              操作菜单<i class="el-icon-arrow-down el-icon--right" />
+              操作菜单
+              <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <!--              <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>-->
@@ -84,10 +93,22 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="userQuery.page" :limit.sync="userQuery.limit" @pagination="getUsers" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="userQuery.page"
+      :limit.sync="userQuery.limit"
+      @pagination="getUsers"
+    />
 
     <el-dialog title="奖励ACB" :visible.sync="rewardACBDialogVisible">
-      <el-form ref="rewardACB" :model="rewardACBTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form
+        ref="rewardACB"
+        :model="rewardACBTemp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;"
+      >
         <el-form-item label="用户名" prop="username">
           <span>{{ rewardACBTemp.username }}</span>
         </el-form-item>
@@ -96,20 +117,12 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="rewardACBDialogVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="rewardACB()">
-          确定
-        </el-button>
+        <el-button @click="rewardACBDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="rewardACB()">确定</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog
-      title="提示"
-      :visible.sync="resetPswDialogVisible"
-      width="30%"
-    >
+    <el-dialog title="提示" :visible.sync="resetPswDialogVisible" width="30%">
       <span>确定重置该用户密码？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="resetPswDialogVisible = false">否</el-button>
@@ -117,17 +130,8 @@
       </span>
     </el-dialog>
 
-    <el-dialog
-      title="签到记录"
-      :visible.sync="checkInDialogVisible"
-      width="55%"
-    >
-      <el-table
-        v-loading="listLoading"
-        :data="checkInRecords"
-        fit
-        highlight-current-row
-      >
+    <el-dialog title="签到记录" :visible.sync="checkInDialogVisible" width="55%">
+      <el-table v-loading="listLoading" :data="checkInRecords" fit highlight-current-row>
         <el-table-column label="ID" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.id }}</span>
@@ -152,12 +156,16 @@
         @pagination="getCheckIn(currentRow)"
       />
     </el-dialog>
-
   </div>
 </template>
 
 <script>
-import { fetchUserList, updateACB, resetPsw, fetchUserCheckIn } from '@/api/user'
+import {
+  fetchUserList,
+  updateACB,
+  resetPsw,
+  fetchUserCheckIn
+} from '@/api/user'
 import waves from '@/directive/waves' // waves指令
 import Pagination from '@/components/Pagination' // 基于el-pagination
 import store from '@/store'
@@ -254,7 +262,12 @@ export default {
         toUsername: this.rewardACBTemp.username,
         fromUsername: store.getters.name,
         title: '赠送ACB通知',
-        text: '亲爱的用户' + this.rewardACBTemp.username + '，恭喜您获得' + this.rewardACBTemp.ACB + 'ACB',
+        text:
+          '亲爱的用户' +
+          this.rewardACBTemp.username +
+          '，恭喜您获得' +
+          this.rewardACBTemp.ACB +
+          'ACB',
         ACB: this.rewardACBTemp.ACB
       }
       this.listLoading = true
@@ -304,10 +317,16 @@ export default {
       })
     },
     getUserTitle(row) {
-      this.$router.push({ path: '/user/userTitle', query: { username: row.username }})
+      this.$router.push({
+        path: '/user/userTitle',
+        query: { username: row.username }
+      })
     },
     getUserDetail(row) {
-      this.$router.push({ path: '/user/userDetail', query: { username: row.username }})
+      this.$router.push({
+        path: '/user/userDetail',
+        query: { username: row.username }
+      })
     }
   }
 }
