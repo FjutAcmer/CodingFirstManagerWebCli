@@ -109,7 +109,7 @@
             本次爬虫任务标记：
             <strong style="color: blue">{{ jobInfo.jobid }}</strong>
             <el-button type="primary" size="small" @click="showRealTimeLog()">查看实时日志文件</el-button>
-            <el-button type="primary" size="small">查看本次任务爬取题目</el-button>
+            <el-button type="primary" size="small" @click="toTempProblems()">查看本次任务爬取题目</el-button>
           </p>
         </div>
         <div v-else>
@@ -209,6 +209,14 @@ export default {
         query: {
           spiderName: this.selectedItem.spiderName,
           jobId: this.jobInfo.jobid
+        }
+      })
+    },
+    toTempProblems() {
+      this.$router.push({
+        name: 'TempProblems',
+        query: {
+          spiderJob: this.jobInfo2.id
         }
       })
     }

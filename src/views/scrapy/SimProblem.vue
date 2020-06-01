@@ -213,6 +213,10 @@ export default {
     queryLocalProblem() {
       fetchProblem(this.localProblemId).then(response => {
         const res = response.data
+        if (!res.datas[0]) {
+          this.$message.warning('未找到该题！')
+          return
+        }
         this.localProblemInfo = res.datas[1]
         this.localProblemInfo.title = res.datas[0].title
         this.localProblemInfo.inputCase = res.datas[2].length

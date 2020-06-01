@@ -62,3 +62,11 @@ export function getSpiderJobList(data) {
     params: data
   })
 }
+
+export function getSpiderJobCountDay(data) {
+  return request({
+    url: '/admin/spider/count/days',
+    method: 'post',
+    params: data
+  })
+}

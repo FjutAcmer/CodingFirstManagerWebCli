@@ -1,5 +1,6 @@
 module.exports = {
-  title: '一码当先后台管理系统',
+  // FIXME: 答辩特供版
+  title: 'ACM竞赛题爬取系统 演示版',
 
   /**
    * @type {boolean} true | false

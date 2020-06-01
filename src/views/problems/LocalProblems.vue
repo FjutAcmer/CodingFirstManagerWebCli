@@ -31,19 +31,15 @@
         @click="handleFilter"
       >搜索</el-button>
       <el-button v-waves class="filter-item" type="primary" @click="clearFilter">查看所有</el-button>
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >添加题目</el-button>`
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加题目</el-button>
+      <el-button class="filter-item" type="success" @click="doLocalAll()">批量本地化</el-button>
     </div>
 
     <el-table
       v-loading="listLoading"
       :data="problems"
       fit
+      border
       highlight-current-row
       style="width: 98%;"
       @sort-change="sortChange"
@@ -58,7 +54,7 @@
           <el-link type="primary" @click="goProblemDetail(row)">{{ row.title }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="通过率" width="120">
+      <el-table-column label="通过率" width="120" align="center">
         <template slot-scope="{row}">
           <span>{{ row.ratio }}</span>
         </template>
@@ -84,9 +80,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="250" class-name="small-padding">
         <template slot-scope="{row,$index}">
-          <el-button size="mini" type="warning">查看测试集</el-button>
+          <el-button size="mini" type="warning" @click="showTestFile(row)">查看测试集</el-button>
           <el-button size="mini" type="primary" @click="handleUpdate(row)">修改</el-button>
-
           <el-button
             size="mini"
             type="danger"
@@ -223,6 +218,12 @@ export default {
         path: '/problems/ProblemDetail',
         query: { id: row.problemId }
       })
+    },
+    showTestFile(row) {
+      this.$message.error('未找到测试集！')
+    },
+    doLocalAll() {
+      this.$message.error('暂不支持！')
     }
   }
 }
