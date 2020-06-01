@@ -10,15 +10,31 @@ export function fetchContestList(query) {
 
 export function fetchContest(id) {
   return request({
-    url: '/contest/info',
+    url: '/admin/contest/info',
     method: 'get',
     params: { id }
+  })
+}
+
+export function fetchContestProblems(contestId) {
+  return request({
+    url: '/contest/problem/list',
+    method: 'get',
+    params: { contestId }
   })
 }
 
 export function createContest(data) {
   return request({
     url: '/admin/contest/create',
+    method: 'post',
+    data
+  })
+}
+
+export function updateContest(data) {
+  return request({
+    url: '/admin/contest/update',
     method: 'post',
     data
   })
@@ -43,6 +59,13 @@ export function updateReview(data) {
 export function getContestInProgress() {
   return request({
     url: '/admin/contest/countInProgress',
+    method: 'get'
+  })
+}
+
+export function getContestTypeCount() {
+  return request({
+    url: '/admin/contest/contestTypeCount',
     method: 'get'
   })
 }

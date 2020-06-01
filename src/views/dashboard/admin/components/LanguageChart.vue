@@ -56,7 +56,6 @@ export default {
           this.languageData[i].name = this.tempData[i].languageName
           this.languageData[i].value = this.tempData[i].usedNum
         }
-        console.log(this.languageData.name)
         this.$nextTick(() => {
           this.initChart()
         })

@@ -1,4 +1,4 @@
-<template>
+template>
   <div class="app-container">
     <div class="context-container">
       <div class="problem-basic">

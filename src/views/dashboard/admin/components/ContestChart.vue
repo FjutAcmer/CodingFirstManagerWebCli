@@ -6,6 +6,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts主题风格
 import resize from './mixins/resize'
+import { getContestTypeCount } from '@/api/contest'
 
 const animationDuration = 6000
 
@@ -27,13 +28,14 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      contestType: [],
+      contestTypeCount: [],
+      tempData: ''
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+    this.getContestTypeData()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -43,6 +45,19 @@ export default {
     this.chart = null
   },
   methods: {
+    getContestTypeData() {
+      getContestTypeCount().then(response => {
+        const res = response.data
+        this.tempData = res.datas[0]
+        for (let i = 0; i < this.tempData.length; i++) {
+          this.contestType.push(this.tempData[i].contestTypeName)
+          this.contestTypeCount.push(this.tempData[i].count)
+        }
+        this.$nextTick(() => {
+          this.initChart()
+        })
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
@@ -62,7 +77,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          data: this.contestType,
           axisTick: {
             alignWithLabel: true
           }
@@ -74,25 +89,11 @@ export default {
           }
         }],
         series: [{
-          name: 'pageA',
+          name: '比赛总数',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: [79, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }, {
-          name: 'pageB',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [80, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }, {
-          name: 'pageC',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [30, 52, 200, 334, 390, 330, 220],
+          data: this.contestTypeCount,
           animationDuration
         }]
       })

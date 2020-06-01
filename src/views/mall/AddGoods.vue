@@ -46,20 +46,8 @@
               inactive-color="#ff4949"
             />
           </el-form-item>
-          <el-form-item label="商品封面">
-            <el-upload
-              ref="pictureUpload"
-              class="picture-upload show"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              list-type="picture-card"
-              :on-success="handlePictureCardPreview"
-              :on-error="handleUploadFail"
-            >
-              <i class="el-icon-plus" />
-            </el-upload>
-            <el-dialog :visible.sync="pictureDialogVisible">
-              <img width="100%" :src="goodsInfo.pictureUrl" alt="">
-            </el-dialog>
+          <el-form-item label="商品封面" prop="pictureUrl">
+            <uploadPicture @getPictureUrl="getPictureUrl"/>
           </el-form-item>
           <el-form-item label="商品描述">
             <div class="text item">
@@ -80,12 +68,16 @@
 import store from '@/store'
 import { createGoods } from '@/api/mall'
 import Tinymce from '@/components/Tinymce'
+import uploadPicture from '@/components/Upload/uploadPicture'
 
 export default {
   name: 'AddGoods',
-  components: { Tinymce },
+  components: { Tinymce, uploadPicture },
   data() {
     return {
+      file: '',
+      imgUrl: '',
+      pictureLoading: false,
       pictureDialogVisible: false,
       buyVerifyLimitOptions: [
         { name: '所有人均可购买', value: 1 },
@@ -111,13 +103,11 @@ export default {
       addGoodsRules: {
         name: [
           { required: true, message: '商品名称不能为空', trigger: 'change' }
+        ],
+        pictureUrl: [
+          { required: true, message: '请上传商品图片', trigger: 'change' }
         ]
       }
-    }
-  },
-  computed: {
-    uploadDisabled() {
-      return this.goodsInfo.pictureUrl !== ''
     }
   },
   methods: {
@@ -149,32 +139,25 @@ export default {
         }
       })
     },
-    handleUploadFail() {
-      this.$message.error('图片上传失败，请重试')
-    },
-    handleRemove() {
-      this.$nextTick(_ => {
-        this.$refs.pictureUpload.$refs.upload.$set('className', 'picture-upload hide')
-      })
-    },
-    handlePictureCardPreview(res, file) {
-      this.goodsInfo.pictureUrl = file.url
-    },
-    beforePictureUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isPNG = file.type === 'image/png'
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isJPG && !isPNG) {
-        this.$message.error('只能上传JPG或PNG格式的图片')
-      }
-      if (!isLt2M) {
-        this.$message.error('上传图片大小不能超过200KB')
-      }
-      return isJPG && isPNG && !isLt2M
+    getPictureUrl(val) {
+      this.goodsInfo.pictureUrl = val
     },
     goBack() {
       this.$store.dispatch('tagsView/delView', this.$route)
       this.$router.go(-1)
+    },
+    beforeRouteLeave(to, from, next) {
+      this.$confirm('正在离开本页面，本页面内所有未保存数据都会丢失', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        next()
+      }).catch(() => {
+        // 如果取消跳转地址栏回退到之前位置
+        this.$store.dispatch('tagsView/delView', this.$route)
+        this.$router.go(-1)
+      })
     }
   }
 }
@@ -193,8 +176,5 @@ export default {
   }
   .form-button {
     float: right;
-  }
-  .picture-upload .hide {
-    display: none;
   }
 </style>

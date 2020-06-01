@@ -30,3 +30,19 @@ export function getLanguageCount() {
   })
 }
 
+export function getJudgeResult(judgeId) {
+  return request({
+    url: '/judge_result/info',
+    method: 'post',
+    params: { judgeId }
+  })
+}
+
+export function submitJudge(data) {
+  return request({
+    url: '/judge_status/submit',
+    method: 'post',
+    params: data
+  })
+}
+

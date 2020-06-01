@@ -1,263 +1,434 @@
-<template>
-  <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="userQuery.userNameOrNickName" placeholder="用户名/昵称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">
-        查看所有
-      </el-button>
-    </div>
+<!--<template>-->
+<!--  <div class="info-body">-->
+<!--    <el-card-->
+<!--      id="userInfo"-->
+<!--      class="box-card-userInfo"-->
+<!--      shadow="always"-->
+<!--    >-->
+<!--      <div class="user-avatar">-->
+<!--        <img-->
+<!--          class="avatar-img"-->
+<!--          :src="this.userCustomInfo.avatarUrl"-->
+<!--        >-->
+<!--        <img-->
+<!--          class="seal-img"-->
+<!--          :src="this.userCustomInfo.sealUrl"-->
+<!--        >-->
+<!--      </div>-->
+<!--      <div>-->
+<!--        <h1>-->
+<!--          <span class="user-adjective">{{ this.userCustomInfo.adjectiveTitle }}</span>-->
+<!--          的-->
+<!--          <span class="user-noun">{{ this.userCustomInfo.articleTitle }}</span>-->
+<!--          <span class="user-nick">{{ this.userBaseInfo.nick }}</span>-->
+<!--        </h1>-->
+<!--        <h2>{{ this.userBaseInfo.motto }}</h2>-->
+<!--      </div>-->
+<!--      &lt;!&ndash; TODO: 暂时使用style，之后替换为css &ndash;&gt;-->
+<!--      <div class="info-detail">-->
+<!--        <span style="color:blue;font-size:26px;">{{ this.userBaseInfo.nick }}</span>-->
+<!--        (<span style="color:orange;font-size:26px;">{{ this.userBaseInfo.username }}</span>)在-->
+<!--        <span> {{ formatterDate(this.userBaseInfo.registerTime) }} </span>加入FJUT Coder，-->
+<!--        来自 <span style="color:white;font-size:26px;">{{ this.userBaseInfo.school }}</span>。-->
+<!--        <tr />-->
+<!--        目前共参加了 <span style="color:blue;font-size:26px;">[xxx]</span> 场积分赛，-->
+<!--        目前积分达到了<span style="color:orange;font-size:26px;">{{ this.userBaseInfo.rating }}</span>，-->
+<!--        在所有人中排名第 <span style="color:red;font-size:26px;">{{ this.userBaseInfo.ranking }} </span>。-->
+<!--        <tr />-->
+<!--        已经在我们的平台上AC过<span style="color:red;font-size:26px;">{{ this.userBaseInfo.acNum }}</span>道题目，-->
+<!--        已经<span v-html="this.userBaseInfo.acDes" />了，-->
+<!--        一共提交过<span style="color:red;font-size:26px;">{{ this.userBaseInfo.totalSubmit }}</span>次。-->
+<!--        <tr />-->
+<!--        一共给<span style="color:red;font-size:26px;">[xxx]</span>道题目贴过标签，-->
+<!--        当前有<span style="color:red;font-size:26px;">{{ this.userBaseInfo.acb }}</span>ACB。<br>-->
+<!--        <div v-if="rewardInfo.length !== 0">-->
+<!--          <span style="color:#eeeeee;font-size:26px;">正式队员经历：</span><br>-->
+<!--          <span-->
+<!--            v-for="item in rewardInfo"-->
+<!--            :key="item"-->
+<!--            style="font-size:20px;"-->
+<!--          >-->
+<!--            {{ item }}<br>-->
+<!--          </span>-->
+<!--        </div>-->
 
-    <el-table
-      v-loading="listLoading"
-      :data="users"
-      border
-      fit
-      highlight-current-row
-      style="width: 98%;"
-      @sort-change="sortChange"
-    >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.userID }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="用户名" width="120" align="center">
-        <template slot-scope="{row}">
-          <el-link type="primary" @click="getUserDetail(row)">{{ row.userName }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column label="昵称" width="120" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.nickName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Moto" width="350" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.moto }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="AC" width="80" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.AC }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Rating" width="80" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.rating }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="ACB" width="80" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.ACB }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="手机号码" width="140" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Email" width="160" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.email }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding">
-        <template slot-scope="{row}">
-          <el-dropdown>
-            <el-button type="primary">
-              操作菜单<i class="el-icon-arrow-down el-icon--right" />
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="handleTagManage(row)">称号管理</el-dropdown-item>
-              <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>
-              <el-dropdown-item @click.native="handleRewardACB(row)">奖励ACB</el-dropdown-item>
-              <el-dropdown-item @click.native="getCheckIn(row)">签到记录</el-dropdown-item>
-              <el-dropdown-item @click.native="handleResetPsw(row)">重置密码</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </el-table-column>
-    </el-table>
+<!--      </div>-->
+<!--      <div id="info-radar" />-->
+<!--      <div-->
+<!--        v-if="!isVisitor"-->
+<!--        class="info-permission"-->
+<!--      >-->
+<!--        【拥有权限】<br>-->
+<!--        <el-tag-->
+<!--          v-for="per in this.userPerList"-->
+<!--          :key="per"-->
+<!--          effect="dark"-->
+<!--          type="success"-->
+<!--          size="small"-->
+<!--        >{{ per }}</el-tag>-->
+<!--      </div>-->
+<!--    </el-card>-->
+<!--    <el-card class="box-card">-->
+<!--      <div id="graph-rating-change" />-->
+<!--    </el-card>-->
+<!--    <el-card class="box-card">-->
+<!--      <div id="graph-submit-change" />-->
+<!--    </el-card>-->
+<!--    <el-card class="box-card">-->
+<!--      <div slot="header">-->
+<!--        已解决题目:{{ problemSolved.length }}-->
+<!--      </div>-->
+<!--      <div-->
+<!--        v-for="item in problemSolved"-->
+<!--        :key="item"-->
+<!--      >-->
+<!--        <div-->
+<!--          class="problem-id"-->
+<!--          @click="toSubmit(item)"-->
+<!--        >{{ item }}</div>-->
+<!--      </div>-->
+<!--    </el-card>-->
+<!--    <el-card class="box-card">-->
+<!--      <div slot="header">-->
+<!--        尝试过但是仍未解决的题目列表：{{ problemSolving.length }}-->
+<!--      </div>-->
+<!--      <div-->
+<!--        v-for="item in problemSolving"-->
+<!--        :key="item"-->
+<!--      >-->
+<!--        <div-->
+<!--          class="problem-id"-->
+<!--          @click="toSubmit(item)"-->
+<!--        >-->
+<!--          {{ item }}</div>-->
+<!--      </div>-->
+<!--    </el-card>-->
+<!--  </div>-->
+<!--</template>-->
 
-    <pagination v-show="total>0" :total="total" :page.sync="userQuery.page" :limit.sync="userQuery.limit" @pagination="getUsers" />
+<!--<script>-->
+<!--import echarts from 'echarts'-->
 
-    <el-dialog title="奖励ACB" :visible.sync="rewardACBDialogVisible">
-      <el-form ref="rewardACB" :model="rewardACBTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户ID" prop="userID">
-          <span>{{ rewardACBTemp.userID }}</span>
-        </el-form-item>
-        <el-form-item label="用户名" prop="userName">
-          <span>{{ rewardACBTemp.userName }}</span>
-        </el-form-item>
-        <el-form-item label="ACB" prop="ACB">
-          <el-input-number v-model="rewardACBTemp.ACB" :min="1" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="rewardACBDialogVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="rewardACB()">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
+<!--export default {-->
+<!--  data() {-->
+<!--    return {-->
+<!--      userBaseInfo: '',-->
+<!--      userCustomInfo: '',-->
+<!--      rewardInfo: [],-->
+<!--      radar: [],-->
+<!--      title: '',-->
+<!--      userPerList: [],-->
+<!--      problemSolved: [],-->
+<!--      problemSolving: [],-->
+<!--      isVisitor: false-->
+<!--    }-->
+<!--  },-->
+<!--  created() {-->
 
-    <el-dialog
-      title="提示"
-      :visible.sync="resetPswDialogVisible"
-      width="30%"
-    >
-      <span>确定重置该用户密码？</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="resetPswDialogVisible = false">否</el-button>
-        <el-button type="primary" @click="resetPsw">是</el-button>
-      </span>
-    </el-dialog>
+<!--  },-->
+<!--  mounted() {-->
+<!--    if (this.$store.getters.getIsLogin) {-->
+<!--      let username = ''-->
+<!--      if (this.$route.query.username) {-->
+<!--        this.isVisitor = true-->
+<!--        username = this.$route.query.username-->
+<!--      } else {-->
+<!--        this.isVisitor = false-->
+<!--        username = this.$store.getters.getUsername-->
+<!--        this.getUserPermission(username)-->
+<!--      }-->
+<!--      this.getUserInfo(username)-->
+<!--      this.getRadarData(username)-->
+<!--      this.getRewardInfo(username)-->
+<!--      this.getRatingRecord(username)-->
+<!--      this.getSubmitRecord(username)-->
+<!--    }-->
+<!--  },-->
+<!--  methods: {-->
+<!--    async getUserInfo(username) {-->
+<!--      const params = new URLSearchParams()-->
+<!--      params.append('username', username)-->
+<!--      const dataUserInfo = await this.$http.get('/user/info', params)-->
+<!--      this.userBaseInfo = dataUserInfo.datas[0]-->
+<!--      this.userCustomInfo = dataUserInfo.datas[1]-->
+<!--      this.userBaseInfo.totalSubmit = dataUserInfo.datas[2]-->
+<!--    },-->
+<!--    async getRewardInfo(username) {-->
+<!--      const params = new URLSearchParams()-->
+<!--      params.append('username', username)-->
+<!--      const dataAwardInfo = await this.$http.get('/user/award', params)-->
+<!--      this.rewardInfo = dataAwardInfo.datas[0]-->
+<!--      console.log(this.rewardInfo)-->
+<!--    },-->
+<!--    async getRadarData(username) {-->
+<!--      const params = new URLSearchParams()-->
+<!--      params.append('username', username)-->
+<!--      const dataUserRadar = await this.$http.get('/problem/radar', params)-->
+<!--      const tempRadarData = dataUserRadar.datas[0]-->
+<!--      for (let i = 0; i < tempRadarData.length; i++) {-->
+<!--        this.radar.push(tempRadarData[i].score)-->
+<!--      }-->
+<!--      this.setRadar()-->
+<!--    },-->
+<!--    async getUserPermission() {-->
+<!--      // let username = this.$store.getters.getUsername-->
+<!--      // let params = new URLSearchParams()-->
+<!--      // params.append('username', username)-->
+<!--      // let dataUserPermission = await this.$http-->
+<!--      //   .get('/permission/getUserPermission', params)-->
+<!--      // let perListTemp = dataUserPermission.datas[0]-->
+<!--      // for (let i = 0; i < perListTemp.length; i++) {-->
+<!--      //   this.userPerList.push(userPerType[perListTemp[i]])-->
+<!--      // }-->
+<!--    },-->
+<!--    setRadar() {-->
+<!--      const myChart = echarts.init(document.getElementById('info-radar'))-->
+<!--      const option = {-->
+<!--        tooltip: {},-->
+<!--        radar: {-->
+<!--          name: {-->
+<!--            textStyle: {-->
+<!--              color: 'white'-->
+<!--            }-->
+<!--          },-->
+<!--          indicator: [-->
+<!--            { name: '基础', max: 100 },-->
+<!--            { name: '数据结构', max: 100 },-->
+<!--            { name: '数学', max: 100 },-->
+<!--            { name: '几何', max: 100 },-->
+<!--            { name: '图论', max: 100 },-->
+<!--            { name: '搜索', max: 100 },-->
+<!--            { name: '动态规划', max: 100 }-->
+<!--          ]-->
+<!--        },-->
+<!--        series: [-->
+<!--          {-->
+<!--            name: this.userBaseInfo.nick + '的技能雷达图，显示数字为百分比',-->
+<!--            type: 'radar',-->
+<!--            itemStyle: { normal: { areaStyle: { type: 'default' }}},-->
+<!--            data: [{ value: this.radar }]-->
+<!--          }-->
+<!--        ]-->
+<!--      }-->
+<!--      myChart.setOption(option)-->
+<!--    },-->
+<!--    async getRatingRecord(username) {-->
+<!--      // let params = new URLSearchParams()-->
+<!--      // params.append('username', username)-->
+<!--      // let dataRatingGraph = await this.$http-->
+<!--      //   .get('/user/getRatingGraph', params)-->
+<!--      //   .catch(() => {-->
 
-  </div>
-</template>
+<!--      //   })-->
+<!--      // this.ratingrecord = dataRatingGraph.datas[0]-->
+<!--      // this.setGraphRatingChange()-->
+<!--    },-->
+<!--    setGraphRatingChange() {-->
+<!--      const myChart = echarts.init(document.getElementById('graph-rating-change'))-->
+<!--      const option = {-->
+<!--        tooltip: {},-->
+<!--        title: {-->
+<!--          text: 'Rating变化',-->
+<!--          x: 'center'-->
+<!--        },-->
+<!--        xAxis: {-->
+<!--          type: 'category',-->
+<!--          boundaryGap: false,-->
+<!--          data: Object.keys(this.ratingrecord)-->
+<!--        },-->
+<!--        yAxis: {-->
+<!--          name: 'submit',-->
+<!--          type: 'value'-->
+<!--        },-->
+<!--        dataZoom: [-->
+<!--          {-->
+<!--            type: 'inside',-->
+<!--            start: 0,-->
+<!--            end: 100-->
+<!--          }-->
+<!--        ],-->
+<!--        series: [-->
+<!--          {-->
+<!--            name: 'Rating变化',-->
+<!--            type: 'line',-->
+<!--            areaStyle: {},-->
+<!--            data: Object.values(this.ratingrecord)-->
+<!--          }-->
+<!--        ]-->
+<!--      }-->
+<!--      myChart.setOption(option)-->
+<!--    },-->
+<!--    async getSubmitRecord(username) {-->
+<!--      // let params = new URLSearchParams()-->
+<!--      // params.append('username', username)-->
+<!--      // let dataAllStatusByUsername = await this.$http-->
+<!--      //   .post('/status/GAllStatusByUsername', params)-->
+<!--      //   .catch(() => {-->
 
-<script>
-import { fetchUserList, updateACB, updatePsw } from '@/api/user'
-import waves from '@/directive/waves' // waves指令
-import Pagination from '@/components/Pagination' // 基于el-pagination
+<!--      //   })-->
+<!--      // this.submitrecord = dataAllStatusByUsername.datas[0]-->
+<!--      // this.setGraphSubmitChange()-->
+<!--    },-->
+<!--    setGraphSubmitChange() {-->
+<!--      const myChart = echarts.init(document.getElementById('graph-submit-change'))-->
+<!--      const option = {-->
+<!--        tooltip: {},-->
+<!--        title: {-->
+<!--          text: '最近1年提交记录',-->
+<!--          x: 'center'-->
+<!--        },-->
+<!--        xAxis: {-->
+<!--          type: 'category',-->
+<!--          boundaryGap: false,-->
+<!--          data: this.submitrecord ? Object.keys(this.submitrecord) : '无'-->
+<!--        },-->
+<!--        yAxis: {-->
+<!--          name: 'submit',-->
+<!--          type: 'value'-->
+<!--        },-->
+<!--        dataZoom: [-->
+<!--          {-->
+<!--            type: 'inside',-->
+<!--            start: 0,-->
+<!--            end: 100-->
+<!--          }-->
+<!--        ],-->
+<!--        series: [-->
+<!--          {-->
+<!--            name: '提交记录',-->
+<!--            type: 'line',-->
+<!--            areaStyle: {},-->
+<!--            data: this.submitrecord ? Object.values(this.submitrecord) : 0-->
+<!--          }-->
+<!--        ]-->
+<!--      }-->
+<!--      myChart.setOption(option)-->
+<!--    }-->
+<!--  }-->
 
-export default {
-  name: 'UserDetail',
-  components: { Pagination },
-  directives: { waves },
-  data() {
-    return {
-      rewardACBDialogVisible: false,
-      resetPswDialogVisible: false,
-      currentRow: '',
-      currentIndex: '',
-      users: null,
-      total: 0,
-      listLoading: true,
-      userQuery: {
-        page: 1,
-        limit: 20,
-        sort: '+id',
-        userNameOrNickName: undefined
-      },
-      rewardACBTemp: {
-        userID: '',
-        userName: '',
-        ACB: '200'
-      }
-    }
-  },
-  created() {
-    this.getUsers()
-  },
-  methods: {
-    getUsers() {
-      this.listLoading = true
-      fetchUserList(this.userQuery).then(response => {
-        const res = response.data
-        this.users = res.data.list
-        this.total = res.data.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-    },
-    handleFilter() {
-      this.userQuery.page = 1
-      this.getUsers()
-    },
-    clearFilter() {
-      this.userQuery = {
-        page: 1,
-        limit: 20,
-        sort: '+id',
-        userNameOrNickName: undefined
-      }
-      this.getUsers()
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.userQuery.sort = '+id'
-      } else {
-        this.userQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
-    resetTemp() {
-      this.temp = {
-        userID: '',
-        userName: '',
-        ACB: '200'
-      }
-    },
-    handleRewardACB(row) {
-      this.resetTemp()
-      this.rewardACBDialogVisible = true
-      this.currentRow = row
-      this.rewardACBTemp.userID = row.userID
-      this.rewardACBTemp.userName = row.userName
-      this.$nextTick(() => {
-        this.$refs['rewardACB'].clearValidate()
-      })
-    },
-    rewardACB() {
-      this.listLoading = true
-      updateACB(this.temp).then(response => {
-        const res = response.data
-        this.rewardACBDialogVisible = false
-        if (res.code === 10000) {
-          this.$notify({
-            message: '赠送成功',
-            type: 'success'
-          })
-        }
-        this.getUsers()
-      })
-    },
-    handleResetPsw(row) {
-      this.resetPswDialogVisible = true
-      this.currentRow = row
-    },
-    resetPsw() {
-      this.listLoading = true
-      updatePsw(this.currentRow).then(response => {
-        const res = response.data
-        this.resetPswDialogVisible = false
-        if (res.code === 10000) {
-          this.$notify({
-            title: '成功',
-            message: '重置成功',
-            type: 'success',
-            duration: 2000
-          })
-        }
-        this.getUsers()
-      })
-    },
-    handleTagManage(row) {
-      this.$router.push({ path: '/user/userTags', query: { id: row.userID, userName: row.userName }})
-    },
-    getUserDetail(row) {
-      this.$router.push({ path: '/user/userDetail', query: { id: row.userID }})
-    }
-  }
-}
-</script>
+<!--}-->
+<!--</script>-->
+
+<!--<style scoped >-->
+<!--  .info-body {-->
+<!--    min-height: 800px;-->
+<!--    width: auto;-->
+<!--  }-->
+
+<!--  .box-card-userInfo {-->
+<!--    background: url(../assets/image/bg/bg_userindex.jpg);-->
+<!--    background-size: 100% 100%;-->
+<!--    margin-left: 10%;-->
+<!--    margin-right: 10%;-->
+<!--    margin-bottom: 20px;-->
+<!--    width: auto;-->
+<!--    min-height: 400px;-->
+<!--    height: auto;-->
+<!--  }-->
+
+<!--  .box-card {-->
+<!--    background-size: 100% 100%;-->
+<!--    margin-left: 10%;-->
+<!--    margin-right: 10%;-->
+<!--    margin-bottom: 15px;-->
+<!--    min-height: 100px;-->
+<!--    height: auto;-->
+<!--  }-->
+
+<!--  .user-avatar {-->
+<!--    text-align: center;-->
+<!--    width: 360px;-->
+<!--    height: 210px;-->
+<!--    margin: auto;-->
+<!--  }-->
+
+<!--  .avatar-img {-->
+<!--    position: absolute;-->
+<!--    border: 8px solid #eeeeee;-->
+<!--    border-radius: 180px;-->
+<!--    width: 180px;-->
+<!--    height: 180px;-->
+<!--  }-->
+
+<!--  .seal-img {-->
+<!--    text-align: center;-->
+<!--    width: 150px;-->
+<!--    height: 60px;-->
+<!--    margin-top: 140px;-->
+<!--    margin-left: 75px;-->
+<!--    z-index: 999;-->
+<!--    transform: rotate(-30deg);-->
+<!--  }-->
+
+<!--  .user-adjective {-->
+<!--    color: red;-->
+<!--  }-->
+
+<!--  .user-noun {-->
+<!--    color: green;-->
+<!--  }-->
+
+<!--  .user-nick {-->
+<!--    color: blue;-->
+<!--  }-->
+
+<!--  .info-detail {-->
+<!--    text-align: left;-->
+<!--    float: left;-->
+<!--    width: 790px;-->
+<!--    min-height: 100px;-->
+<!--    font-size: 20px;-->
+<!--    color: white;-->
+<!--    line-height: 40px;-->
+<!--  }-->
+
+<!--  #info-radar {-->
+<!--    float: right;-->
+<!--    min-width: 320px;-->
+<!--    height: 320px;-->
+<!--    padding: 5px;-->
+<!--  }-->
+
+<!--  #graph-rating-change {-->
+<!--    width: 100%;-->
+<!--    height: 400px;-->
+<!--  }-->
+
+<!--  #graph-submit-change {-->
+<!--    width: 100%;-->
+<!--    height: 400px;-->
+<!--  }-->
+
+<!--  .info-permission {-->
+<!--    float: left;-->
+<!--    text-align: left;-->
+<!--    font-size: 18px;-->
+<!--    font-weight: bold;-->
+<!--    min-height: 100px;-->
+<!--    min-width: 600px;-->
+<!--  }-->
+
+<!--  .el-tag {-->
+<!--    margin-bottom: 4px;-->
+<!--    margin-right: 14px;-->
+<!--  }-->
+
+<!--  .box-card-title {-->
+<!--    font-weight: bold;-->
+<!--    font-size: 18px;-->
+<!--  }-->
+
+<!--  .problem-id {-->
+<!--    color: #337ab7;-->
+<!--    float: left;-->
+<!--    width: 90px;-->
+<!--    cursor: pointer;-->
+<!--    margin-bottom: 10px;-->
+<!--    margin-left: 2%;-->
+<!--  }-->
+
+<!--  .problem-id:hover {-->
+<!--    color: blue;-->
+<!--    text-decoration: underline;-->
+<!--  }-->
+<!--</style>-->

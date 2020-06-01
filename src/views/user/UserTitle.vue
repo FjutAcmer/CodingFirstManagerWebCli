@@ -211,7 +211,6 @@ export default {
       this.$refs['addTitle'].validate((valid) => {
         if (valid) {
           this.addTitleTemp.username = this.userTitleQuery.username
-          console.log('fgrr')
           console.log(this.userTitleQuery.username)
           addTitle(this.addTitleTemp).then(response => {
             this.addDialogVisible = false

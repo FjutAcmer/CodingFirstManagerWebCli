@@ -9,9 +9,6 @@
       <el-button v-waves class="filter-item" type="primary" @click="clearFilter">
         查看所有
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新增讨论
-      </el-button>
     </div>
 
     <el-table
@@ -27,7 +24,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="标题" width="400" align="center">
+      <el-table-column label="标题" width="500" align="center">
         <template slot-scope="{row}">
           <el-link type="primary" @click="getDetail(row)">{{ row.title }}</el-link>
         </template>
@@ -44,7 +41,7 @@
       </el-table-column>
       <el-table-column label="回复数" align="center" width="70">
         <template slot-scope="{row}">
-          <span>{{ row.replyNum }}</span>
+          <span>{{ row.replyNum === -1 ? 0 : row.replyNum }}</span>
         </template>
       </el-table-column>
       <el-table-column label="优先级" width="140" align="center">
@@ -52,7 +49,7 @@
           <el-link type="primary" @click="updatePriority(row)">{{ row.priority }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding">
+      <el-table-column label="操作" align="center" width="100" class-name="small-padding">
         <template slot-scope="{row,$index}">
           <el-button size="mini" type="danger" @click="currentRow = row, currentIndex = $index, deleteDialogVisible = true">
             删除
@@ -119,7 +116,7 @@ export default {
         this.total = res.datas[1]
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 0.5 * 1000)
       })
     },
     handleFilter() {
@@ -162,6 +159,7 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.total -= 1
           this.discussion.splice(index, 1)
         }
       })
