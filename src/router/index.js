@@ -71,8 +71,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'dashboard',
-        // FIXME: 答辩特供版
-        component: () => import('@/views/dashboard/index2'),
+        component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: '主页', icon: 'dashboard', affix: true }
       }
@@ -133,17 +132,15 @@ export const asyncRoutes = [
         path: 'TitleList',
         component: () => import('@/views/user/TitleList'),
         name: 'TitleList',
-        meta: { title: '称号管理', noCache: true },
-        // FIXME: 答辩特供版
-        hidden: true
+        meta: { title: '称号管理', noCache: true }
+
       },
       {
         path: 'Verification',
         component: () => import('@/views/user/Verification'),
         name: 'Verification',
-        meta: { title: '认证审核', noCache: true },
-        // FIXME: 答辩特供版
-        hidden: true
+        meta: { title: '认证审核', noCache: true }
+
       }
     ]
   },
@@ -221,17 +218,13 @@ export const asyncRoutes = [
         path: 'VJProblems',
         component: () => import('@/views/problems/VJProblems'),
         name: 'VJProblems',
-        meta: { title: 'VJ远程题库', noCache: true },
-        // FIXME: 答辩特供版
-        hidden: true
+        meta: { title: 'VJ远程题库', noCache: true }
       },
       {
         path: 'ProblemsTag',
         component: () => import('@/views/problems/ProblemsTag'),
         name: 'ProblemsTag',
-        meta: { title: '题目标签', noCache: true },
-        // FIXME: 答辩特供版
-        hidden: true
+        meta: { title: '题目标签', noCache: true }
       },
       {
         path: 'EditProblems',
@@ -272,8 +265,6 @@ export const asyncRoutes = [
       title: '商城管理',
       icon: 'shopping'
     },
-    // FIXME: 答辩特供版
-    hidden: true,
     children: [
       {
         path: 'GoodsList',
@@ -312,8 +303,6 @@ export const asyncRoutes = [
       title: '比赛管理',
       icon: 'table'
     },
-    // FIXME: 答辩特供版
-    hidden: true,
     children: [
       {
         path: 'PracticeContest',
@@ -368,8 +357,6 @@ export const asyncRoutes = [
       title: '排名管理',
       icon: 'list'
     },
-    // FIXME: 答辩特供版
-    hidden: true,
     children: [
       {
         path: 'HonorRank',
@@ -407,8 +394,6 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     redirect: '/judge/JudgeList',
-    // FIXME: 答辩特供版
-    hidden: true,
     children: [
       {
         path: 'Judge',
@@ -426,8 +411,6 @@ export const asyncRoutes = [
       title: '挑战管理',
       icon: 'star'
     },
-    // FIXME: 答辩特供版
-    hidden: true,
     children: [
       {
         path: 'ChallengeList',
@@ -458,8 +441,6 @@ export const asyncRoutes = [
       title: '讨论管理',
       icon: 'wechat'
     },
-    // FIXME: 答辩特供版
-    hidden: true,
     children: [
       {
         path: 'Discussion',
@@ -516,8 +497,6 @@ export const asyncRoutes = [
       title: '系统管理',
       icon: 'form'
     },
-    // FIXME: 答辩特供版
-    hidden: true,
     children: [
       {
         path: 'SystemSetting',

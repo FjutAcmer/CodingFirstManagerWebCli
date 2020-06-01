@@ -24,8 +24,7 @@ export default {
   },
   data() {
     return {
-      // FIXME: 答辩特供版
-      title: 'ACM竞赛题爬取系统',
+      title: '一码当先后台管理系统',
       logo: 'https://i.loli.net/2020/05/19/rHx8JoBkOvmnM1V.jpg'
     }
   }
