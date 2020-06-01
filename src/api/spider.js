@@ -23,9 +23,17 @@ export function getItems(data) {
   })
 }
 
-export function startSpider(data) {
+export function startFullSpider(data) {
   return request({
-    url: '/admin/spider/start',
+    url: '/admin/spider/start/full',
+    method: 'post',
+    data: data
+  })
+}
+
+export function startSpecSpider(data) {
+  return request({
+    url: '/admin/spider/start/spec',
     method: 'post',
     data: data
   })

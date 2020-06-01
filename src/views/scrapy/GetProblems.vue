@@ -127,7 +127,12 @@
 <script>
 import OJSiteCard from './components/OJSiteCard'
 import store from '@/store'
-import { getSites, startSpider, rangeCheck } from '@/api/spider'
+import {
+  getSites,
+  startFullSpider,
+  startSpecSpider,
+  rangeCheck
+} from '@/api/spider'
 export default {
   name: 'GetProblems',
   components: {
@@ -192,16 +197,29 @@ export default {
         return
       }
       this.loading = true
-      startSpider({
-        spiderName: this.selectedItem.spiderName,
-        range: this.selectRange,
-        username: store.getters.name
-      }).then(response => {
-        const res = response.data
-        this.jobInfo = res.datas[0]
-        this.jobInfo2 = res.datas[1]
-        this.loading = false
-      })
+      if (this.selectedItem.spiderType === 1) {
+        startFullSpider({
+          spiderName: this.selectedItem.spiderName,
+          range: this.selectRange,
+          username: store.getters.name
+        }).then(response => {
+          const res = response.data
+          this.jobInfo = res.datas[0]
+          this.jobInfo2 = res.datas[1]
+          this.loading = false
+        })
+      } else if (this.selectedItem.spiderType === 2) {
+        startSpecSpider({
+          spiderName: this.selectedItem.spiderName,
+          range: this.selectRange,
+          username: store.getters.name
+        }).then(response => {
+          const res = response.data
+          this.jobInfo = res.datas[0]
+          this.jobInfo2 = res.datas[1]
+          this.loading = false
+        })
+      }
     },
     showRealTimeLog() {
       this.$router.push({

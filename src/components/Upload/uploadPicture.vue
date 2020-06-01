@@ -1,7 +1,7 @@
 <template>
   <el-upload
     class="picture-uploader"
-    action=""
+    action
     :show-file-list="false"
     :on-change="uploadPicture"
     :before-upload="beforePictureUpload"
@@ -42,7 +42,8 @@ export default {
       uploadFile(formData).then(response => {
         const res = response.data
         this.imgUrl = URL.createObjectURL(this.file)
-        const val = this.imgUrl
+        console.log(res)
+        const val = process.env.VUE_APP_BASE_API + '/image/pic/' + res.datas[0]
         this.$emit('getPictureUrl', val)
         this.pictureDialogVisible = true
         this.$message({
@@ -70,47 +71,47 @@ export default {
 </script>
 
 <style scoped>
-  .picture-uploader{
-    width: 150PX;
-    height: 150px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    border: 1px dashed #d9d9d9;
-  }
-  .picture-uploader-icon{
-    font-size: 28px;
-    background-color: rgba(0, 0, 0, .3);
-    color: #fff;
-    width: 150px;
-    height: 150px;
-    line-height: 150px;
-    text-align: center;
-  }
-  .picture-uploader-icon:hover{
-    background-color: rgba(0, 0, 0, .5);
-  }
-  .goods-cover {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    display: block;
-  }
-  .el-upload-action {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    font-size: 0;
-    color: #fff;
-    text-align: center;
-    line-height: 120px;
-  }
-  .el-upload-action:hover {
-    font-size: 20px;
-    background-color: #000;
-    background-color: rgba(0, 0, 0, .3)
-  }
+.picture-uploader {
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px dashed #d9d9d9;
+}
+.picture-uploader-icon {
+  font-size: 28px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  width: 150px;
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+}
+.picture-uploader-icon:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.goods-cover {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: block;
+}
+.el-upload-action {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+  color: #fff;
+  text-align: center;
+  line-height: 120px;
+}
+.el-upload-action:hover {
+  font-size: 20px;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.3);
+}
 </style>

@@ -195,7 +195,14 @@ export default {
         query: { id: row.problemId }
       })
     },
-    handleCreate() {},
+    handleCreate() {
+      // TODO:
+      this.$message.warning('暂不支持！等待更新')
+    },
+    doLocalAll() {
+      // TODO:
+      this.$message.warning('暂不支持！等待更新')
+    },
     deleteProblem() {
       this.deleteDialogVisible = false
       const row = this.currentRow
@@ -220,10 +227,8 @@ export default {
       })
     },
     showTestFile(row) {
-      this.$message.error('未找到测试集！')
-    },
-    doLocalAll() {
-      this.$message.error('暂不支持！')
+      // TODO:
+      this.$message.warning('暂不支持！等待更新')
     }
   }
 }

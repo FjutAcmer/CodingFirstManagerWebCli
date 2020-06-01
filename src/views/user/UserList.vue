@@ -23,7 +23,6 @@
       :data="users"
       fit
       highlight-current-row
-      style="width: 98%;"
       @sort-change="sortChange"
     >
       <el-table-column type="expand">
@@ -65,7 +64,7 @@
           <span>{{ row.motto }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ACB数量" width="60" align="center">
+      <el-table-column label="ACB数量" width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.acb }}</span>
         </template>
@@ -83,7 +82,7 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <!--              <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item>-->
+              <!-- <el-dropdown-item @click.native="getUserDetail(row)">统计数据</el-dropdown-item> -->
               <el-dropdown-item @click.native="handleRewardACB(row)">奖励ACB</el-dropdown-item>
               <el-dropdown-item @click.native="getCheckIn(row)">签到记录</el-dropdown-item>
               <el-dropdown-item @click.native="handleResetPsw(row)">重置密码</el-dropdown-item>
@@ -275,13 +274,13 @@ export default {
         const res = response.data
         this.rewardACBDialogVisible = false
         if (res.code === 10000) {
-          this.listLoading = false
           this.currentRow.acb = this.currentRow.acb + data.ACB
           this.$message({
             message: '奖励成功',
             type: 'success'
           })
         }
+        this.listLoading = false
       })
     },
     getCheckIn(row) {

@@ -1,36 +1,63 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="vjProblemsQuery.title" placeholder="标题" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="vjProblemsQuery.OJId" placeholder="OJ" filterable clearable class="filter-item" style="width: 130px">
-        <el-option
-          v-for="item in Ojs"
-          :key="item.name"
-          :value="item.name"
-        />
+      <el-input
+        v-model="vjProblemsQuery.title"
+        placeholder="标题"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-select
+        v-model="vjProblemsQuery.OJId"
+        placeholder="OJ"
+        filterable
+        clearable
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option v-for="item in Ojs" :key="item.name" :value="item.name" />
       </el-select>
-      <el-input v-model="vjProblemsQuery.probNum" placeholder="题号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="vjProblemsQuery.source" placeholder="来源" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" @click="clearFilter">
-        查看所有
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="warning" @click="handleUpdate">
-        更新缓存
-      </el-button>
+      <el-input
+        v-model="vjProblemsQuery.probNum"
+        placeholder="题号"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="vjProblemsQuery.source"
+        placeholder="来源"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >搜索</el-button>
+
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="success"
+        @click="handleUpdate"
+      >重新获取</el-button>
     </div>
 
     <el-table
       v-loading="listLoading"
       :data="vjProblems"
       fit
+      border
       highlight-current-row
       style="width: 98%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="OJ" align="center" width="120">
+      <el-table-column label="OJ名称" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.originOJ }}</span>
         </template>
@@ -50,34 +77,28 @@
           <span>{{ parseTime(row.triggerTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="来源" width="200" align="center">
+      <el-table-column label="来源" align="center">
         <template slot-scope="{row}">
           <span v-html="row.source" />
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding">
-        <template slot-scope="{}">
-          <el-button size="mini" type="danger" @click="handleDelete">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="vjProblemsQuery.pageNum" :limit.sync="vjProblemsQuery.pageSize" @pagination="getVJProblems" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="vjProblemsQuery.pageNum"
+      :limit.sync="vjProblemsQuery.pageSize"
+      @pagination="getVJProblems"
+    />
 
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogVisible"
-      width="30%"
-    >
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确定删除本题目缓存？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">否</el-button>
         <el-button type="primary" @click="handleDelete">是</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 
@@ -111,8 +132,7 @@ export default {
         source: undefined
       },
       dialogStatus: '',
-      rules: {
-      }
+      rules: {}
     }
   },
   created() {
@@ -185,7 +205,10 @@ export default {
       this.getVJProblems()
     },
     goProblemDetail(row) {
-      this.$router.push({ path: '/problems/VJProblemDetail', query: { probNum: row.originProb, OJId: row.originOJ }})
+      this.$router.push({
+        path: '/problems/VJProblemDetail',
+        query: { probNum: row.originProb, OJId: row.originOJ }
+      })
     }
   }
 }

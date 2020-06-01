@@ -68,8 +68,9 @@ service.interceptors.response.use(
         position: 'top-left',
         offset: 40,
         showClose: false,
-        message: '权限不足，请联系管理员'
+        message: '权限不足，请联系超级管理员！'
       })
+      return res
     } else if (res.data.code === 20003) {
       MessageBox.alert('您的认证已过期，可能已在其他地方登录，如果您有疑问，请联系管理员', '认证过期', {
         confirmButtonText: '重新登录',

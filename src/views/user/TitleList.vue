@@ -16,15 +16,9 @@
         @click="handleFilter"
       >搜索</el-button>
       <el-button v-waves class="filter-item" type="primary" @click="clearFilter">查看所有</el-button>
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >添加称号</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加称号</el-button>
+      <el-button class="filter-item" type="success">授予用户称号</el-button>
     </div>
-
     <el-table
       v-loading="listLoading"
       :data="titles"
@@ -45,7 +39,10 @@
       </el-table-column>
       <el-table-column label="图片" width="200" align="center">
         <template slot-scope="{row}">
-          <el-image style="width: 140px; height: 140px" :src="row.pictureUrl ? row.pictureUrl : indexImg" />
+          <el-image
+            style="width: 140px; height: 140px"
+            :src="row.pictureUrl ? row.pictureUrl : indexImg"
+          />
         </template>
       </el-table-column>
       <el-table-column label="类型" width="250" align="center">
@@ -117,12 +114,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="createTitle">
-          确定
-        </el-button>
+        <el-button @click="createDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="createTitle">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -151,7 +144,8 @@ export default {
       currentIndex: '',
       titles: null,
       total: 0,
-      indexImg: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=291872238,3072063863&fm=26&gp=0.jpg',
+      indexImg:
+        'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=291872238,3072063863&fm=26&gp=0.jpg',
       listLoading: true,
       titleQuery: {
         page: 1,
@@ -178,9 +172,7 @@ export default {
         name: [
           { required: true, message: '称号名称不能为空', trigger: 'change' }
         ],
-        lifeTime: [
-          { validator: validateLifeTime, trigger: 'change' }
-        ],
+        lifeTime: [{ validator: validateLifeTime, trigger: 'change' }],
         pictureUrl: [
           { required: true, message: '请上传图片', trigger: 'change' }
         ]
