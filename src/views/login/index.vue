@@ -56,7 +56,7 @@
         type="primary"
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
-      >登陆</el-button>
+      >登录</el-button>
 
       <div style="position:relative">
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">其他账号登陆</el-button>
@@ -113,7 +113,12 @@ export default {
         ],
         password: [
           { required: true, message: '密码不能为空', trigger: 'change' },
-          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'change' },
+          {
+            min: 6,
+            max: 20,
+            message: '长度在 6 到 20 个字符',
+            trigger: 'change'
+          },
           { validator: validatePassword, trigger: 'change' }
         ]
       },
