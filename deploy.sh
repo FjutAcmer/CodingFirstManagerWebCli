@@ -1,6 +1,6 @@
 # 以支持全自动部署
 npm install
-npm run build
+npm run build:prod
 sudo docker pull nginx
 sudo docker stop coding_first_manager_web_cli
 sudo docker rm coding_first_manager_web_cli
